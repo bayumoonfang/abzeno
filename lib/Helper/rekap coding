@@ -1,0 +1,119 @@
+
+
+
+Future<dynamic> getOtherLocation() async {
+    http.Response response = await http.Client().get(
+        Uri.parse(applink+"mobile/api_mobile.php?act=getOtherLocation&karyawan_no="+getKaryawanNo),
+        headers: {
+          "Accept":"application/json",
+          "Content-Type": "application/json"}
+    ).timeout(
+          Duration(seconds: 10),onTimeout: (){
+      AppHelper().showFlushBarsuccess(context,"Koneksi terputus..");
+            EasyLoading.dismiss();
+            http.Client().close();
+            return http.Response('Error',500);
+        }
+    );
+    return json.decode(response.body);
+  }
+
+void show_otherlocation() {
+    showDialog(context: context,
+        builder: (BuildContext context) {
+            return AlertDialog(
+              content : Container(
+                height: 205,
+                width: double.infinity,
+                child : FutureBuilder(
+                  //future : getOtherLocation(),
+                  builder : (context, AsyncSnapshot snapshot){
+                    if (snapshot.data == null) {
+                      return Center(
+                          child: CircularProgressIndicator()
+                      );
+                    } else {
+                      return snapshot.data == 0 || snapshot.data.length == 0 ?
+                      Container(
+                          height: double.infinity, width : double.infinity,
+                          child: new
+                          Center(
+                              child :
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  new Text(
+                                    "Tidak ada data",
+                                    style: new TextStyle(
+                                        fontFamily: 'VarelaRound', fontSize: 18),
+                                  )
+                                ],
+                              )))
+                          :
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(padding : const EdgeInsets.only(top : 5,bottom:12),
+                              child : Align(
+                                  alignment : Alignment.centerLeft,
+                                  child : Text("Other Work Location", style : GoogleFonts.varelaRound(
+                                      fontWeight: FontWeight.bold, fontSize: 20
+                                  ))
+                              )),
+                          Container(
+                              width: 100,
+                              height: 160,
+                              child : ListView.builder(
+                                  itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                                  itemBuilder: (context, i) {
+                                    return SingleChildScrollView(
+                                        child : Column(
+                                          children: [
+                                            Align(
+                                              alignment : Alignment.centerLeft,
+                                              child : Padding(padding: const EdgeInsets.only(top:15),
+                                                child : InkWell(
+                                                    onTap: (){
+                                                      setState(() {
+                                                        _changeLocation(snapshot.data[i]["a"].toString());
+                                                        Navigator.pop(context);
+                                                      });
+                                                    },
+                                                    child : Row(
+                                                      children: [
+                                                        FaIcon(FontAwesomeIcons.circle,size: 8,color: Colors.black,),
+                                                        Padding(
+                                                            padding: const EdgeInsets.only(left : 10),
+                                                            child : Text(snapshot.data[i]["b"].toString(),
+                                                                style : GoogleFonts.varelaRound(
+
+                                                                ))
+                                                        )
+                                                      ],
+                                                    )
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(padding: const EdgeInsets.only(top:15),
+                                                child : Divider(height : 5)),
+                                          ],
+                                        )
+                                    );
+                                  }
+                              )
+                          )
+                        ],
+
+                      );
+                    }
+                  }
+                )
+
+              )
+            );
+        }
+
+    );
+  }
