@@ -168,7 +168,7 @@ class _TimeOffDetail extends State<TimeOffDetail> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Cancel Request", style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),
+      title: Text("Cancel Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
       content: Text("Would you like to continue cancel this request ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
@@ -478,8 +478,7 @@ class _TimeOffDetail extends State<TimeOffDetail> {
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                           ),
-                          child: Text("All Approval",style: GoogleFonts.lexendDeca(fontSize: 13,
-                              color: Colors.white),),
+                          child: Text("Show All"),
                           onPressed: (){
                             showModalBottomSheet(
                                 isScrollControlled: true,
@@ -530,16 +529,17 @@ class _TimeOffDetail extends State<TimeOffDetail> {
                                                                             'assets/user.png'),
                                                                       ),)),
                                                                 title:  Transform.translate(
-                                                                    offset: Offset(-18, 0),child :Padding(padding: EdgeInsets.only(top: 10),child: Text(timeoff_appr1_name.toString(),style: GoogleFonts.nunito(
-                                                                    fontWeight: FontWeight.bold,fontSize: 15),),)),
+                                                                    offset: Offset(-18, 0),child :Padding(padding: EdgeInsets.only(top: 10),child:
+                                                                Text(timeoff_appr1_name.toString(),style: GoogleFonts.montserrat(
+                                                                    fontWeight: FontWeight.bold,fontSize: 14),),)),
                                                                 subtitle: Transform.translate(
                                                                     offset: Offset(-18, 0),child :Column(
                                                                   children: [
                                                                     Align(alignment: Alignment.centerLeft,child: Text(timeoff_jabatan1,
-                                                                        style: GoogleFonts.nunito(fontSize: 13)),),
+                                                                        style: GoogleFonts.montserrat(fontSize: 13)),),
                                                                     Padding(padding: EdgeInsets.only(top: 5),
-                                                                      child: Align(alignment: Alignment.centerLeft,child: Text(timeoff_appr1_note == '' ? "-" : timeoff_appr1_note,
-                                                                          style: GoogleFonts.nunito(fontSize: 13)),),)
+                                                                      child: Align(alignment: Alignment.centerLeft,child: Text(timeoff_appr1_note == '' ? "-" : "#"+timeoff_appr1_note,
+                                                                          style: GoogleFonts.montserrat(fontSize: 13,color: Colors.black)),),)
                                                                   ],
                                                                 )),
                                                                 trailing: Transform.translate(
@@ -581,16 +581,17 @@ class _TimeOffDetail extends State<TimeOffDetail> {
                                                                             'assets/user.png'),
                                                                       ),)),
                                                                 title:  Transform.translate(
-                                                                    offset: Offset(-18, 0),child :Padding(padding: EdgeInsets.only(top: 10),child: Text(timeoff_appr2_name.toString(),style: GoogleFonts.nunito(
-                                                                    fontWeight: FontWeight.bold,fontSize: 15),),)),
+                                                                    offset: Offset(-18, 0),child :Padding(padding: EdgeInsets.only(top: 10),child:
+                                                                Text(timeoff_appr2_name.toString(),style: GoogleFonts.montserrat(
+                                                                    fontWeight: FontWeight.bold,fontSize: 14),),)),
                                                                 subtitle: Transform.translate(
                                                                     offset: Offset(-18, 0),child :Column(
                                                                   children: [
                                                                     Align(alignment: Alignment.centerLeft,child: Text(timeoff_jabatan2,
-                                                                        style: GoogleFonts.nunito(fontSize: 13)),),
+                                                                        style: GoogleFonts.montserrat(fontSize: 13)),),
                                                                     Padding(padding: EdgeInsets.only(top: 5),
-                                                                      child: Align(alignment: Alignment.centerLeft,child: Text(timeoff_appr2_note == '' ? "-" : timeoff_appr2_note,
-                                                                          style: GoogleFonts.nunito(fontSize: 13)),),)
+                                                                      child: Align(alignment: Alignment.centerLeft,child: Text(timeoff_appr2_note == '' ? "-" : "#"+timeoff_appr2_note,
+                                                                          style: GoogleFonts.montserrat(fontSize: 13,color: Colors.black)),),)
                                                                   ],
                                                                 )),
                                                                 trailing: Transform.translate(
@@ -639,7 +640,7 @@ class _TimeOffDetail extends State<TimeOffDetail> {
       bottomSheet: Container(
           padding: EdgeInsets.only(left: 45, right: 45, bottom: 10),
           width: double.infinity,
-          height: 50,
+          height: 58,
           child:
           _isPressed == false && timeoff_status == 'Pending'?
           ElevatedButton(

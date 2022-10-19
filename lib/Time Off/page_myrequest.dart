@@ -131,7 +131,7 @@ class _PageMyRequest extends State<PageMyRequest> {
                                     ),
                                     Expanded(
                                       child: ListView.builder(
-                                        itemExtent: 85,
+                                        itemExtent: 75,
                                         itemCount: snapshot.data == null ? 0 : snapshot.data?.length,
                                         padding: const EdgeInsets.only(left: 10,right: 15,bottom: 85),
                                         itemBuilder: (context, i) {
@@ -237,9 +237,11 @@ class _PageMyRequest extends State<PageMyRequest> {
           )
       ),
       floatingActionButton: Container(
-        width: 65,
-        height: 65,
+
+        width: 62,
+        height: 62,
         child: FloatingActionButton(
+          backgroundColor: HexColor("#00a884"),
           child: FaIcon(FontAwesomeIcons.plus),
           onPressed: () {
             FocusScope.of(context).requestFocus(FocusNode());

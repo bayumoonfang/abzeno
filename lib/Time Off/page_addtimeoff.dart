@@ -515,8 +515,8 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
-        backgroundColor: HexColor("#128C7E"),
-        title: Text("Add Time Off", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Add Time Off", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>
@@ -527,6 +527,18 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                     Navigator.pop(context);
                   }),
         ),
+        actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 25,top: 16),
+                child: InkWell(
+                  child: FaIcon(FontAwesomeIcons.save),
+                  onTap: (){
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    showDialog2(context);
+                  },
+                ),
+              )
+        ],
       ),
       body: Container(
         child: Padding(
@@ -547,7 +559,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                         child: DropdownButton(
                           isExpanded: false,
                           hint: Text("Choose time off type",
-                            style: GoogleFonts.nunito(
+                            style: GoogleFonts.workSans(
                                 fontSize: 15, color: Colors.black),),
                           value: selectedTimeOffTipe,
                           items:
@@ -555,7 +567,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                             return DropdownMenuItem(
                               value: item['c'].toString(),
                               child: Text(item['b'].toString(),
-                                  style: GoogleFonts.nunito(
+                                  style: GoogleFonts.workSans(
                                       fontSize: 15, color: Colors.black)),
                             );
                           }).toList(),
@@ -605,7 +617,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                             padding: const EdgeInsets.only(right: 15),
                             child:
                             TextFormField(
-                              style: GoogleFonts.nunito(fontSize: 16),
+                              style: GoogleFonts.workSans(fontSize: 16),
                               textCapitalization: TextCapitalization
                                   .sentences,
                               controller: _datefrom,
@@ -615,7 +627,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                                 labelText: 'Start Date',
                                 labelStyle: TextStyle(
                                     fontFamily: "VarelaRound",
-                                    fontSize: 16.5, color: Colors.black87
+                                    fontSize: 15, color: Colors.black87,
                                 ),
                                 floatingLabelBehavior: FloatingLabelBehavior
                                     .always,
@@ -722,7 +734,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                     ),),
 
 
-                  Padding(padding: const EdgeInsets.only(top: 18, right: 25),
+                  Padding(padding: const EdgeInsets.only(top: 25, right: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment
                           .spaceBetween,
@@ -853,7 +865,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                     ),),
 
 
-                  Padding(padding: const EdgeInsets.only(top: 18),
+                  Padding(padding: const EdgeInsets.only(top: 25),
                       child: Column(
                         children: [
 
@@ -1046,44 +1058,6 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
               ),
             )
         ),
-      ),
-      bottomSheet: Container(
-        padding: EdgeInsets.only(left: 45, right: 45, bottom: 10),
-        width: double.infinity,
-        height: 55,
-        child:
-          _isPressed == false ?
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor("#075E54"),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-              showDialog2(context);
-            },
-          ) :
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor("#DDDDDD"),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {},
-          )
       ),
     ), onWillPop: onWillPop);
   }

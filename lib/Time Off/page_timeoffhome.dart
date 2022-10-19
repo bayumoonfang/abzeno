@@ -49,8 +49,8 @@ class _PageTimeOffHome extends State<PageTimeOffHome> with SingleTickerProviderS
     return WillPopScope(child: Scaffold(
       appBar: new AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Time Off", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Time Off", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
@@ -64,7 +64,7 @@ class _PageTimeOffHome extends State<PageTimeOffHome> with SingleTickerProviderS
         bottom: new TabBar(
           indicatorColor: Colors.white,
           controller: controller,
-          labelStyle: GoogleFonts.varelaRound(fontWeight: FontWeight.bold,fontSize: 15),
+            labelStyle: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold,fontSize: 15),
             unselectedLabelStyle: GoogleFonts.varelaRound(fontSize: 13),
             //unselectedLabelColor: Colors.white,
           tabs: <Widget>[
