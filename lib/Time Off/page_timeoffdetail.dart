@@ -194,8 +194,8 @@ class _TimeOffDetail extends State<TimeOffDetail> {
       appBar: AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
         //backgroundColor: HexColor("#128C7E"),
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Detail Time Off", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Detail Time Off", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>

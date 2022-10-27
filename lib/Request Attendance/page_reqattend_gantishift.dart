@@ -21,19 +21,19 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 
-class RequestAttendance extends StatefulWidget{
+class RequestGantiShift extends StatefulWidget{
   final String getKaryawanNo;
   final String getType;
   final String getDate;
   final String getDescription;
   final String getDate2;
-  const RequestAttendance(this.getKaryawanNo, this.getType, this.getDate, this.getDescription, this.getDate2);
+  const RequestGantiShift(this.getKaryawanNo, this.getType, this.getDate, this.getDescription, this.getDate2);
   @override
-  _RequestAttendance createState() => _RequestAttendance();
+  _RequestGantiShift createState() => _RequestGantiShift();
 }
 
 
-class _RequestAttendance extends State<RequestAttendance> {
+class _RequestGantiShift extends State<RequestGantiShift> {
   TextEditingController _TimeStart = TextEditingController();
   TextEditingController _TimeEnd = TextEditingController();
   var selectedTimeStart;
@@ -66,9 +66,9 @@ class _RequestAttendance extends State<RequestAttendance> {
   }
 
   String getAttenceMessage = "...";
-  getAttendanceDetail() async {
+  getAttendanceCheck() async {
     final response = await http.get(Uri.parse(
-        applink + "mobile/api_mobile.php?act=getAttendanceCheck&karyawanNo=" +
+        applink + "mobile/api_mobile.php?act=getAttendanceCheckGantiShift&karyawanNo=" +
             widget.getKaryawanNo+"&getDate="+widget.getDate)).timeout(
         Duration(seconds: 10), onTimeout: () {
       AppHelper().showFlushBarsuccess(context, "Koneksi terputus..");
@@ -77,14 +77,8 @@ class _RequestAttendance extends State<RequestAttendance> {
     }
     );
     Map data = jsonDecode(response.body);
-    print(
-        applink + "mobile/api_mobile.php?act=getAttendanceCheck&karyawanNo=" +
-            widget.getKaryawanNo+"&getDate="+widget.getDate);
     setState(() {
       getAttenceMessage = data["message"].toString();
-      if(data["message"].toString() == "1") {
-        _getScheduleDetail();
-      }
       EasyLoading.dismiss();
     });
   }
@@ -93,7 +87,7 @@ class _RequestAttendance extends State<RequestAttendance> {
   void initState() {
     super.initState();
     EasyLoading.show(status: "Waiting for Attendance Check...");
-    getAttendanceDetail();
+    getAttendanceCheck();
   }
 
 
@@ -185,7 +179,7 @@ class _RequestAttendance extends State<RequestAttendance> {
       },
     );
     AlertDialog alert = AlertDialog(
-      title: Text("Add Attendance Request", style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),
+      title: Text("Add Attendance Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
       content: Text("Would you like to continue add attendance request ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
@@ -206,8 +200,8 @@ class _RequestAttendance extends State<RequestAttendance> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Add Attendance "+widget.getType, style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Attendance "+widget.getType, style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>
@@ -218,13 +212,41 @@ class _RequestAttendance extends State<RequestAttendance> {
                     Navigator.pop(context);
                   }),
         ),
+        actions: [
+          getAttenceMessage == "0" ?
+          Padding(
+            padding: EdgeInsets.only(right: 25,top: 16),
+            child: InkWell(
+              child: FaIcon(FontAwesomeIcons.save),
+              onTap: (){
+                FocusScope.of(context).requestFocus(new FocusNode());
+                setState(() {
+                  _isPressed = true;
+                });
+                showDialogme(context);
+              },
+            ),
+          ) : Container()
+        ],
       ),
       body:
             Container(
               width: double.infinity,
               height: double.infinity,
               padding: EdgeInsets.only(left: 25,right: 25),
-              child:
+              child: getAttenceMessage == "1" ?
+                        Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                            Text("We Find Request Attendance or Time OFF in your date", style: GoogleFonts.nunito(fontSize: 15),
+                            textAlign: TextAlign.center,),
+                            Text("Try to another date or call HRD for more information", style: GoogleFonts.nunito(fontSize: 15))
+                          ],
+                        ),
+                ) :
                  Column(
                    children: [
 
@@ -233,7 +255,7 @@ class _RequestAttendance extends State<RequestAttendance> {
                      alignment: Alignment.centerLeft,
                      child:   Padding(
                        padding: EdgeInsets.only(top:25),
-                       child: Text(widget.getType+ " at ("+widget.getDate2+")",style: GoogleFonts.nunitoSans(fontSize: 16,fontWeight: FontWeight.bold,
+                       child: Text(widget.getType+ " at ("+widget.getDate2+")",style: GoogleFonts.montserrat(fontSize: 16,fontWeight: FontWeight.bold,
                            color: Colors.black)),
                      ),
                    ),
@@ -242,7 +264,7 @@ class _RequestAttendance extends State<RequestAttendance> {
                      Padding(
                        padding: EdgeInsets.only(top: 25),
                        child:  TextFormField(
-                         style: GoogleFonts.nunito(fontSize: 16),
+                         style: GoogleFonts.workSans(fontSize: 16),
                          textCapitalization: TextCapitalization.sentences,
                          controller: _TimeStart,
                          decoration: InputDecoration(
@@ -295,7 +317,7 @@ class _RequestAttendance extends State<RequestAttendance> {
                      Padding(
                        padding: EdgeInsets.only(top: 25),
                        child:  TextFormField(
-                         style: GoogleFonts.nunito(fontSize: 16),
+                         style: GoogleFonts.workSans(fontSize: 16),
                          textCapitalization: TextCapitalization.sentences,
                          controller: _TimeEnd,
                          decoration: InputDecoration(
@@ -348,46 +370,6 @@ class _RequestAttendance extends State<RequestAttendance> {
                    ],
                  )
             ),
-      bottomSheet:
-      Container(
-          padding: EdgeInsets.only(left: 25, right: 25, bottom: 10),
-          width: double.infinity,
-          height: 55,
-          child:
-          _isPressed == false ?
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor(AppHelper().main_color),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-
-              showDialogme(context);
-            },
-          ) :
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor("#DDDDDD"),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {},
-          )
-      )
 
     ), onWillPop: onWillPop);
   }

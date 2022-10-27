@@ -32,13 +32,25 @@ class PageClockIn extends StatefulWidget{
   final String getNamaHari;
   final String getLocationLat;
   final String getLocationLong;
-  final String getScheduleID;
   final String getAttendanceType;
   final String getKaryawanNama;
   final String getKaryawanJabatan;
-  const PageClockIn(this.getKaryawanNo,this.getJam,this.getLocationId, this.getNamaHari,
-      this.getLocationLat, this.getLocationLong,this.getScheduleID,this.getAttendanceType,this.getKaryawanNama,
-      this.getKaryawanJabatan);
+  final String getStartTime;
+  final String getEndTime;
+  final String getScheduleName;
+  const PageClockIn(
+      this.getKaryawanNo,
+      this.getJam,
+      this.getLocationId,
+      this.getNamaHari,
+      this.getLocationLat,
+      this.getLocationLong,
+      this.getAttendanceType,
+      this.getKaryawanNama,
+      this.getKaryawanJabatan,
+      this.getStartTime,
+      this.getEndTime,
+      this.getScheduleName);
   @override
   _PageClockIn createState() => _PageClockIn();
 }
@@ -229,8 +241,8 @@ class _PageClockIn extends State<PageClockIn> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: new AppBar(
-        backgroundColor: HexColor("#128C7E"),
-        title: Text(widget.getJam, style: GoogleFonts.nunito(fontSize: 20),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text(widget.getJam, style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         centerTitle: true,
         elevation: 0,
         leading: Builder(
@@ -286,7 +298,7 @@ class _PageClockIn extends State<PageClockIn> {
                       Align(alignment: Alignment.centerLeft,child: Padding(
                         padding: const EdgeInsets.only(left: 0),
                         child: TextFormField(
-                          style: GoogleFonts.nunito(fontSize: 16),
+                          style: GoogleFonts.workSans(fontSize: 16),
                           textCapitalization: TextCapitalization.sentences,
                           controller: _noteclockin,
                           decoration: InputDecoration(
@@ -381,13 +393,14 @@ class _PageClockIn extends State<PageClockIn> {
                           ),
                             borderRadius: BorderRadius.circular(5.0),
                           )),
-                      child : Text(widget.getAttendanceType.toString(), style: GoogleFonts.lato(fontWeight: FontWeight.bold,color: Colors.white),),
+                      child : Text(widget.getAttendanceType.toString(),style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                          fontSize: 14),),
                       onPressed: (){
                         setState(() {
                           //isPressed = true;
                         });
                         //_addattendance();
-                        if(int.parse(jarak.toString()) > 999999999 ) {
+                        if(int.parse(jarak.toString()) > AppHelper().range_max ) {
                           AppHelper().showFlushBarerror(context, "Maaf anda tidak absen karena berada diluar area yang ditentukan");
                           setState(() {
                             //isPressed = false;
@@ -401,21 +414,21 @@ class _PageClockIn extends State<PageClockIn> {
                               widget.getKaryawanNo,
                               widget.getJam,
                               AppHelper().getNamaHari().toString(),
-                              widget.getScheduleID,
                               _noteclockin.text,
                               "Clock In",
                               widget.getKaryawanNama,
-                          widget.getKaryawanJabatan)))
+                          widget.getKaryawanJabatan,
+                          widget.getStartTime,widget.getEndTime,widget.getScheduleName)))
                               :
                           Navigator.push(context, ExitPage(page: ClockOut(
                               widget.getKaryawanNo,
                               widget.getJam,
                               AppHelper().getNamaHari().toString(),
-                              widget.getScheduleID,
                               _noteclockin.text,
                               "Clock Out",
                               widget.getKaryawanNama,
-                              widget.getKaryawanJabatan)));
+                              widget.getKaryawanJabatan,
+                              widget.getStartTime,widget.getEndTime,widget.getScheduleName)));
                         }
                         //EasyLoading.show(status: "Loading...");
                       },
@@ -434,7 +447,8 @@ class _PageClockIn extends State<PageClockIn> {
                             ),
                               borderRadius: BorderRadius.circular(5.0),
                             )),
-                        child : Text("CLOCK IN", style: GoogleFonts.lato(fontWeight: FontWeight.bold,color: Colors.white),),
+                        child : Text("CLOCK IN",style: GoogleFonts.lexendDeca(color:Colors.white,fontWeight: FontWeight.bold,
+                            fontSize: 14),),
                         onPressed: (){
                         },
                       )

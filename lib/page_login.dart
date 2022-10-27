@@ -95,16 +95,22 @@ class _PageLogin extends State<PageLogin> {
               mainAxisAlignment: MainAxisAlignment.center,
               //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(alignment: Alignment.centerLeft,child : Text("Halo,", style : GoogleFonts.poppins(fontWeight: FontWeight.bold,
+                Align(alignment: Alignment.centerLeft,child : Text("Halo, Login Yuk", style : GoogleFonts.poppins(fontWeight: FontWeight.bold,
                     fontSize: 32, color: HexColor("#44a440")))),
                 Padding(padding: const EdgeInsets.only(top: 1),child :  Align(alignment: Alignment.centerLeft,
-                    child : Text("Email Anda", style : GoogleFonts.poppins(fontWeight: FontWeight.bold,
+                    child : Text("Email Kamu", style : GoogleFonts.montserrat(fontWeight: FontWeight.bold,
                         fontSize: 18))),),
                 Opacity(
                     opacity: 0.8,
                     child :    Padding(padding: const EdgeInsets.only(top: 5),child :  Align(alignment: Alignment.centerLeft,
-                        child : Text("Pastikan email anda sudah terdaftar dan aktif", style : GoogleFonts.lato(
+                        child : Text("Pastikan email kamu sudah terdaftar dan aktif ya", style : GoogleFonts.nunitoSans(
                             fontSize: 13))),)
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child:  Padding(padding: EdgeInsets.only(top: 5),
+                    child: Text("(Jika belum terdaftar atau tidak bisa login hubungi HRD kamu ya)", style : GoogleFonts.nunitoSans(
+                        fontSize: 11)),),
                 ),
 
                 Padding(padding: const EdgeInsets.only(top: 10,right: 15),
@@ -121,6 +127,7 @@ class _PageLogin extends State<PageLogin> {
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: HexColor("#DDDDDD"), width: 1.0),
                       ),
+                      hintText: 'contoh : HRD@mishr.com'
                       /* prefixIcon: Padding(
                         padding: EdgeInsets.only(left: 2), // add padding to adjust icon
                         child: Icon(Icons.phone, size: 20,),
@@ -128,6 +135,7 @@ class _PageLogin extends State<PageLogin> {
                     ),
                   ),
                 ),
+
               ],
             )
 

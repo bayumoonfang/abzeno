@@ -140,8 +140,8 @@ class _RequestAttendance extends State<RequestAttendance> {
                                       child : ListTile(
                                           visualDensity: VisualDensity(horizontal: -2),
                                           dense : true,
-                                          title:  Text("Attendance "+snapshot.data![i]["f"].toString(),style: GoogleFonts.nunitoSans(
-                                              fontWeight: FontWeight.bold,fontSize: 18),),
+                                          title:  Text(snapshot.data![i]["f"].toString(),  style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,fontSize: 15),),
                                           subtitle: Column(
                                             children: [
                                               Padding(
@@ -152,7 +152,7 @@ class _RequestAttendance extends State<RequestAttendance> {
                                                         AppHelper().getTanggalCustom(snapshot.data![i]["a"].toString()) + " "+
                                                             AppHelper().getNamaBulanCustomFull(snapshot.data![i]["a"].toString()) + " "+
                                                             AppHelper().getTahunCustom(snapshot.data![i]["a"].toString()),
-                                                        style: GoogleFonts.nunitoSans(fontSize: 14)),
+                                                        style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),
                                                    ],
                                                 ),),
                                               ),
@@ -166,7 +166,9 @@ class _RequestAttendance extends State<RequestAttendance> {
 
                                             ],
                                           ),
-                                          trailing: Opacity(
+                                          trailing:
+                                snapshot.data![i]["e"].toString() != 'Fully Approved' ?
+                                          Opacity(
                                             opacity: 0.9,
                                             child: Container(
                                               child: OutlinedButton(
@@ -176,7 +178,6 @@ class _RequestAttendance extends State<RequestAttendance> {
                                                     width: 1,
                                                     color: snapshot.data![i]["e"].toString() == 'Pending'? Colors.black54 :
                                                     snapshot.data![i]["e"].toString() == 'Approved 1' ? HexColor("#0074D9") :
-                                                    snapshot.data![i]["e"].toString() == 'Fully Approved' ? HexColor("#3D9970") :
                                                     HexColor("#FF4136"),
                                                     style: BorderStyle.solid,
                                                   ),
@@ -184,13 +185,13 @@ class _RequestAttendance extends State<RequestAttendance> {
                                                 child: Text(snapshot.data![i]["e"].toString(),style: GoogleFonts.nunito(fontSize: 12,
                                                     color: snapshot.data![i]["e"].toString() == 'Pending'? Colors.black54 :
                                                     snapshot.data![i]["e"].toString() == 'Approved 1' ? HexColor("#0074D9") :
-                                                    snapshot.data![i]["e"].toString() == 'Fully Approved' ? HexColor("#3D9970") :
                                                     HexColor("#FF4136")),),
                                                 onPressed: (){},
                                               ),
                                               height: 25,
                                             ),
-                                          )
+                                          ) :
+                                          FaIcon(FontAwesomeIcons.circleCheck,color: HexColor("#3D9970"),size: 30,)
                                       ),
                                       onTap: (){
                                         EasyLoading.show(status: "Loading...");
@@ -224,9 +225,10 @@ class _RequestAttendance extends State<RequestAttendance> {
       floatingActionButton:
       widget.getKategori == 'listq' ?
       Container(
-        width: 65,
-        height: 65,
+        width: 62,
+        height: 62,
         child: FloatingActionButton(
+          backgroundColor: HexColor("#00a884"),
           child: FaIcon(FontAwesomeIcons.plus),
           onPressed: () {
             FocusScope.of(context).requestFocus(FocusNode());

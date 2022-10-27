@@ -98,12 +98,9 @@ class _ChangeCabang extends State<ChangeCabang> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: new AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
+        backgroundColor: HexColor("#3a5664"),
         title: Text(
-          "Ubah Lokasi Absen",
-          style: TextStyle(
-              color: Colors.white, fontFamily: 'VarelaRound', fontSize: 16),
-        ),
+          "Ubah Lokasi Absen", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         leading: Builder(
           builder: (context) => IconButton(
               icon: new Icon(Icons.arrow_back),

@@ -54,6 +54,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
       return http.Response('Error', 500);
     }
     );
+
     Map data = jsonDecode(response.body);
     setState(() {
       EasyLoading.dismiss();
@@ -77,12 +78,9 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
     }
     );
     Map data = jsonDecode(response.body);
-    print(
-        applink + "mobile/api_mobile.php?act=getAttendanceCheck&karyawanNo=" +
-            widget.getKaryawanNo+"&getDate="+widget.getDate);
     setState(() {
       getAttenceMessage = data["message"].toString();
-      if(data["message"].toString() == "1") {
+      if(data["message"].toString() == "2") {
         _getScheduleDetail();
       }
       EasyLoading.dismiss();
@@ -129,7 +127,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
           Navigator.pop(context);
           SchedulerBinding.instance?.addPostFrameCallback((_) {
             AppHelper().showFlushBarconfirmed(context,
-                "Attendance Correction has been posted");
+                "Attendance Correction has been posted, and waiting for approval");
           });
           return;
         }  else if (data["message"] == '0') {
@@ -182,7 +180,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
       },
     );
     AlertDialog alert = AlertDialog(
-      title: Text("Add Attendance Correction", style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),
+      title: Text("Add Attendance Correction", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
       content: Text("Would you like to continue add attendance correction ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
@@ -203,8 +201,8 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Add Attendance "+widget.getType, style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Add Attendance "+widget.getType, style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>
@@ -215,6 +213,22 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                     Navigator.pop(context);
                   }),
         ),
+        actions: [
+          getAttenceMessage == "2" ?
+          Padding(
+            padding: EdgeInsets.only(right: 25,top: 16),
+            child: InkWell(
+              child: FaIcon(FontAwesomeIcons.save),
+              onTap: (){
+                FocusScope.of(context).requestFocus(new FocusNode());
+                setState(() {
+                  _isPressed = true;
+                });
+                showDialogme(context);
+              },
+            ),
+          ) : Container()
+        ],
       ),
       body:
             Container(
@@ -232,6 +246,17 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                     Text("Try to use Attendace Request", style: GoogleFonts.nunito(fontSize: 15))
                   ],
                 ),
+              ) : getAttenceMessage == "1" ?
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                    Text("We find your attendance, but you haven't clocked out", style: GoogleFonts.nunito(fontSize: 15)),
+                    Text("Please do clock out first then back later", style: GoogleFonts.nunito(fontSize: 15))
+                  ],
+                ),
               ) :
                  Column(
                    children: [
@@ -241,7 +266,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                        child: Column(
                          children: [
 
-                           Text("Schedule",style: GoogleFonts.nunitoSans(fontSize: 18,fontWeight: FontWeight.bold,
+                           Text("Schedule",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
                                color: Colors.black)),
                            Wrap(
                              // alignment: WrapAlignment.start,
@@ -291,7 +316,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                          width: double.infinity,
                          child: Column(
                            children: [
-                             Text("Attendance",style: GoogleFonts.nunitoSans(fontSize: 18,fontWeight: FontWeight.bold,
+                             Text("Attendance",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
                                  color: Colors.black)),
                              Wrap(
                                // alignment: WrapAlignment.start,
@@ -333,7 +358,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                      alignment: Alignment.centerLeft,
                      child:   Padding(
                        padding: EdgeInsets.only(top:25),
-                       child: Text(widget.getType+ " at ("+widget.getDate2+")",style: GoogleFonts.nunitoSans(fontSize: 16,fontWeight: FontWeight.bold,
+                       child: Text(widget.getType+ " at ("+widget.getDate2+")",style: GoogleFonts.montserrat(fontSize: 16,fontWeight: FontWeight.bold,
                            color: Colors.black)),
                      ),
                    ),
@@ -342,7 +367,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                      Padding(
                        padding: EdgeInsets.only(top: 25),
                        child:  TextFormField(
-                         style: GoogleFonts.nunito(fontSize: 16),
+                         style: GoogleFonts.workSans(fontSize: 16),
                          textCapitalization: TextCapitalization.sentences,
                          controller: _TimeStart,
                          decoration: InputDecoration(
@@ -395,7 +420,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                      Padding(
                        padding: EdgeInsets.only(top: 25),
                        child:  TextFormField(
-                         style: GoogleFonts.nunito(fontSize: 16),
+                         style: GoogleFonts.workSans(fontSize: 16),
                          textCapitalization: TextCapitalization.sentences,
                          controller: _TimeEnd,
                          decoration: InputDecoration(
@@ -448,52 +473,6 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                    ],
                  )
             ),
-      bottomSheet:
-
-      getAttenceMessage != "0" ?
-      Container(
-          padding: EdgeInsets.only(left: 25, right: 25, bottom: 10),
-          width: double.infinity,
-          height: 55,
-          child:
-          _isPressed == false ?
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor(AppHelper().main_color),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-              setState(() {
-                _isPressed = true;
-              });
-              showDialogme(context);
-            },
-          ) :
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: HexColor("#DDDDDD"),
-                elevation: 0,
-                shape: RoundedRectangleBorder(side: BorderSide(
-                    color: Colors.white,
-                    width: 0.1,
-                    style: BorderStyle.solid
-                ),
-                  borderRadius: BorderRadius.circular(5.0),
-                )),
-            child: Text("Request"),
-            onPressed: () {},
-          )
-      ) : Container(
-        width: double.infinity,
-        height: 55,)
 
     ), onWillPop: onWillPop);
   }

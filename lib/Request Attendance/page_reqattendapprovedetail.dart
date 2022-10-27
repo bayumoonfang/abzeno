@@ -133,7 +133,7 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
           //Navigator.pushReplacement(context, ExitPage(page: Home()));
           Navigator.pop(context);
           Navigator.pop(context);
-          AppHelper().showFlushBarconfirmed(context, "Time Off Request has been Reject");
+          AppHelper().showFlushBarconfirmed(context, "Request has been Approved");
           loadData2();
         } else {
           AppHelper().showFlushBarsuccess(context, data["message"]);
@@ -302,8 +302,8 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
       appBar: AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
         //backgroundColor: HexColor("#128C7E"),
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Detail Request Attendance", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Detail Request Attendance", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>
@@ -337,7 +337,7 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
                           child:Text("Request Number",
                               style: GoogleFonts.nunito(fontSize: 13)),),
                         Align(alignment: Alignment.centerLeft,child: Padding(padding: EdgeInsets.only(top: 5),
-                          child: Text(widget.getReqAttendCode.toString(), style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),))
+                          child: Text(widget.getReqAttendCode.toString(), style: GoogleFonts.montserrat(fontSize: 19,fontWeight: FontWeight.bold)),))
                       ],
                     ),
                   ),
@@ -382,108 +382,126 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
             ),
 
             Padding(
-              padding: EdgeInsets.only(bottom: 30),
+              padding: EdgeInsets.only(bottom:10),
               child: Divider(height: 3,),),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Request Type", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                Text(reqattend_type.toString(), style: GoogleFonts.nunito(fontSize: 14),),],
-            ),
-
-
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                  Text(
-                      AppHelper().getTanggalCustom(reqattend_date.toString()) + " "+
-                          AppHelper().getNamaBulanCustomFull(reqattend_date.toString()) + " "+
-                          AppHelper().getTahunCustom(reqattend_date.toString()),
-                      style: GoogleFonts.nunito(fontSize: 14)),],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Description", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                  Text(reqattend_description.toString(),
-                      style: GoogleFonts.nunito(fontSize: 14)),],
-              ),
-            ),
-
-            reqattend_type.toString() == "Correction" ?
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Card(
+                child: Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Column(
                     children: [
-                      Text("Schedule Clock In", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                      Text(reqattend_scheduleclockin.toString(),
-                          style: GoogleFonts.nunito(fontSize: 14)),],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Request Type", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                          Text(reqattend_type.toString(), style: GoogleFonts.nunito(fontSize: 14),),],
+                      ),
+
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                            Text(
+                                AppHelper().getTanggalCustom(reqattend_date.toString()) + " "+
+                                    AppHelper().getNamaBulanCustomFull(reqattend_date.toString()) + " "+
+                                    AppHelper().getTahunCustom(reqattend_date.toString()),
+                                style: GoogleFonts.nunito(fontSize: 14)),],
+                        ),
+                      ),
+
+
+                      reqattend_type.toString() == "Correction" ?
+                      Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Schedule Clock In", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                                Text(reqattend_scheduleclockin.toString(),
+                                    style: GoogleFonts.nunito(fontSize: 14)),],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Schedule Clock In", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                                Text(reqattend_scheduleclockout.toString(),
+                                    style: GoogleFonts.nunito(fontSize: 14)),],
+                            ),
+                          ),
+                        ],
+                      ) : Container(),
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Clock In Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                            Text(reqattend_clockin.toString(),
+                                style: GoogleFonts.nunito(fontSize: 14)),],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Clock Out Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                            Text(reqattend_clockout.toString(),
+                                style: GoogleFonts.nunito(fontSize: 14)),],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child:  Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Date Created", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                            Text( AppHelper().getTanggalCustom(reqattend_datecreated.toString()) + " "+
+                                AppHelper().getNamaBulanCustomFull(reqattend_datecreated.toString()) + " "+
+                                AppHelper().getTahunCustom(reqattend_datecreated.toString()),
+                                style: GoogleFonts.nunito(fontSize: 14)),],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child:  Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child:  Text("Description", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14,
+                                  fontWeight: FontWeight.bold),),
+                            ),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child:  Text(reqattend_description.toString(),
+                                    style: GoogleFonts.nunito(fontSize: 14)))
+                          ],
+                        ),
+                      ),
+
+
+                    ],
                   ),
-                ),
 
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Schedule Clock In", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                      Text(reqattend_scheduleclockout.toString(),
-                          style: GoogleFonts.nunito(fontSize: 14)),],
-                  ),
-                ),
-              ],
-            ) : Container(),
-
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Clock In Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                  Text(reqattend_clockin.toString(),
-                      style: GoogleFonts.nunito(fontSize: 14)),],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Clock Out Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                  Text(reqattend_clockout.toString(),
-                      style: GoogleFonts.nunito(fontSize: 14)),],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Date Created", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                  Text( AppHelper().getTanggalCustom(reqattend_datecreated.toString()) + " "+
-                      AppHelper().getNamaBulanCustomFull(reqattend_datecreated.toString()) + " "+
-                      AppHelper().getTahunCustom(reqattend_datecreated.toString()),
-                      style: GoogleFonts.nunito(fontSize: 14)),],
-              ),
-            ),
-
+                )),
 
 
             Padding(
-              padding: EdgeInsets.only(top: 30,bottom: 20),
+              padding: EdgeInsets.only(top: 20,bottom: 20),
               child: Divider(height: 3,),),
 
             Align(alignment: Alignment.centerLeft,child: Text("Approval List",

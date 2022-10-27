@@ -21,14 +21,16 @@ class ClockOut extends StatefulWidget {
   final String getKaryawanNo;
   final String getJam;
   final String getNamaHari;
-  final String getScheduleID;
   final String getNote;
   final String getType;
   final String getKaryawanNama;
   final String getKaryawanJabatan;
-  const ClockOut(this.getKaryawanNo, this.getJam, this.getNamaHari,this.getScheduleID,this.getNote,this.getType,
+  final String getStartTime;
+  final String getEndTime;
+  final String getScheduleName;
+  const ClockOut(this.getKaryawanNo, this.getJam, this.getNamaHari,this.getNote,this.getType,
       this.getKaryawanNama,
-      this.getKaryawanJabatan);
+      this.getKaryawanJabatan,this.getStartTime,this.getEndTime,this.getScheduleName);
   @override
   _ClockOut createState()=> _ClockOut();
 }
@@ -44,7 +46,9 @@ class _ClockOut extends State<ClockOut> {
       "att_namaHari": widget.getNamaHari,
       "att_jam": widget.getJam,
       "att_note": widget.getNote,
-      "att_scheduleID": widget.getScheduleID,
+      "att_getStartTime": widget.getStartTime,
+      "att_getEndTime": widget.getEndTime,
+      "att_getScheduleName": widget.getScheduleName,
       "att_type" : widget.getType
     }).timeout(Duration(seconds: 10),onTimeout: (){
       http.Client().close();
@@ -56,7 +60,7 @@ class _ClockOut extends State<ClockOut> {
       if(data["message"] != '') {
         EasyLoading.dismiss();
         if(data["message"] == '0') {
-          AppHelper().showFlushBarsuccess(context, "Anda sudah absen");
+          AppHelper().showFlushBarsuccess(context, "Anda sudah absen, atau anda tidak ada jadwal untuk hari ini");
           return;
         } else if(data["message"] == '1') {
           Navigator.pushReplacement(context, ExitPage(page: Home()));
@@ -83,12 +87,10 @@ class _ClockOut extends State<ClockOut> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: new AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
+        //backgroundColor: HexColor(AppHelper().main_color),
+        backgroundColor: HexColor("#3a5664"),
         title: Text(
-          widget.getType.toString(),
-          style: TextStyle(
-              color: Colors.white, fontFamily: 'VarelaRound', fontSize: 16),
-        ),
+          widget.getType.toString(), style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         leading: Builder(
           builder: (context) => IconButton(
               icon: new Icon(Icons.arrow_back),
@@ -131,7 +133,8 @@ class _ClockOut extends State<ClockOut> {
                 alignment: Alignment.center,
                 child: Container(
                   width: 150,
-                  child: ElevatedButton(child : Text(widget.getType.toString(),style: GoogleFonts.nunito(color: Colors.white,fontSize: 13),),
+                  child: ElevatedButton(child : Text(widget.getType.toString(),style: GoogleFonts.lexendDeca(color:Colors.white,fontWeight: FontWeight.bold,
+                      fontSize: 14),),
                     style: ElevatedButton.styleFrom(
                         primary: HexColor("#075E54"),
                         elevation: 0,

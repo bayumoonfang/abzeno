@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:abzeno/Helper/app_link.dart';
 import 'package:abzeno/page_home.dart';
+import 'package:abzeno/page_intoduction.dart';
 import 'package:abzeno/page_login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +30,10 @@ class _PageCheck extends State<PageCheck> {
     await AppHelper().reloadSession();
     await AppHelper().getSession().then((value){
       setState(() {
-        if(value[0] == null) {
-          Navigator.pushReplacement(context, ExitPage(page: PageLogin()));
+        if(value[0] == '') {
+          Navigator.pushReplacement(context, ExitPage(page: Introduction()));
+        } else {
+          Navigator.pushReplacement(context, ExitPage(page: Home()));
         }
       });});
   }
@@ -38,9 +41,6 @@ class _PageCheck extends State<PageCheck> {
 
   loadData() async {
     await _startingVariable();
-    setState(() {
-      Navigator.pushReplacement(context, ExitPage(page: Home()));
-    });
   }
 
   @override

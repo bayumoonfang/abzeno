@@ -140,12 +140,16 @@ class _PageMyApproval extends State<PageMyApproval> {
 
                                             InkWell(
                                               child : ListTile(
+                                                  visualDensity: VisualDensity(vertical: -2),
+                                                  dense : true,
                                                   title: Opacity(
                                                       opacity: 0.9,
                                                       child:
-                                                      Padding(padding: EdgeInsets.only(top: 5),child:
-                                                      Text(snapshot.data![i]["j"].toString(),style: GoogleFonts.nunito(
-                                                          fontWeight: FontWeight.bold,fontSize: 16),),)
+                                                      Padding(padding: EdgeInsets.only(top: 2),child:
+                                                      Text(snapshot.data![i]["j"].toString(),
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: GoogleFonts.montserrat(
+                                                            fontWeight: FontWeight.bold,fontSize: 17),),)
                                                   ),
                                                   subtitle: Column(
                                                     children: [
@@ -157,24 +161,25 @@ class _PageMyApproval extends State<PageMyApproval> {
                                                                 AppHelper().getTanggalCustom(snapshot.data![i]["c"].toString()) + " "+
                                                                     AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["c"].toString()) + " "+
                                                                     AppHelper().getTahunCustom(snapshot.data![i]["c"].toString()),
-                                                                style: GoogleFonts.nunito(fontSize: 14)),
+                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),
                                                             Text(" - "),
                                                             Text(
                                                                 AppHelper().getTanggalCustom(snapshot.data![i]["d"].toString()) + " "+
                                                                     AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["d"].toString()) + " "+
-                                                                    AppHelper().getTahunCustom(snapshot.data![i]["d"].toString()),style: GoogleFonts.nunito(
-                                                                fontWeight: FontWeight.bold,fontSize: 14)),
+                                                                    AppHelper().getTahunCustom(snapshot.data![i]["d"].toString()),
+                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),
                                                             Text(" "),
-                                                            Text("("+snapshot.data![i]["k"].toString()+" Hari"+")",style: GoogleFonts.nunito(
-                                                                fontWeight: FontWeight.bold,fontSize: 14))
+                                                            Text("("+snapshot.data![i]["k"].toString()+" Hari"+")",
+                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black))
                                                           ],
                                                         ),),
                                                       ),
 
                                                       Padding(
-                                                          padding: EdgeInsets.only(top: 3,bottom: 1),
+                                                          padding: EdgeInsets.only(top: 2,bottom: 1),
                                                           child: Align(alignment: Alignment.centerLeft,
-                                                              child:Text("Jenis : "+snapshot.data![i]["m"].toString(),style: TextStyle(fontSize: 13)))),
+                                                              child:Text("Jenis : "+snapshot.data![i]["m"].toString(),
+                                                                  style: GoogleFonts.workSans()))),
 
 
                                                     ],

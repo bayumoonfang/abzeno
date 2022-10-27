@@ -27,6 +27,10 @@ class AppHelper{
   var main_color = "#075E54";
   var second_color = "#128C7E";
   var third_color = "#34B7F1";
+  int range_max = 999999;
+  var default_pass = "e10adc3949ba59abbe56e057f20f883e";
+  var app_name = "MIS HR";
+  var app_tag = "mishr";
 
 
   String getTahun() {
@@ -393,6 +397,8 @@ class AppHelper{
     }
     );
     var data = jsonDecode(response.body);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("getPIN", data["karyawan_password"].toString());
     return [
       data["karyawan_jabatan"].toString(), //0
       data["karyawan_nama"].toString(), //1
@@ -428,7 +434,6 @@ class AppHelper{
       data["karyawan_bpjskelas"].toString(), //28
       data["karyawan_bpjspaidby"].toString(), //29
       data["karyawan_npwp"].toString(), //30
-
     ];
   }
 
@@ -514,14 +519,18 @@ class AppHelper{
         Duration(seconds: 20),onTimeout: (){
       http.Client().close();
       return http.Response('Error',500);
+
     }
     );
+    //print(applink+"mobile/api_mobile.php?act=getScheduleDetail&karyawanNo="+getKaryawanNo+"&getDate="+dateme.toString());
     var data = jsonDecode(response.body);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString("getStartTime", data["schedule_clockin"].toString());
     preferences.setString("getEndTime", data["schedule_clockout"].toString());
-    preferences.setString("getScheduleMessage", data["schedule_name"].toString());
+    preferences.setString("getScheduleName", data["schedule_name"].toString());
+    //preferences.setString("getScheduleID", data["schedule_id"].toString());
     preferences.setString("getScheduleID", data["schedule_id"].toString());
+    preferences.setString("getScheduleBtn", data["schedule_btn"].toString());
     return [
       "Sukses"
     ];
@@ -530,6 +539,7 @@ class AppHelper{
 
    reloadSession() async {
     await getSchedule();
+    await getDetailUser();
     //await getAttendance();
     await getAttendanceSebelum();
     //await getWorkLocation();
@@ -545,7 +555,7 @@ class AppHelper{
     String getKaryawanJabatan = await Session.getKaryawanJabatan();
     String getStartTime = await Session.getStartTime();
 
-    String getScheduleMessage = await Session.getScheduleMessage();
+    String getScheduleName = await Session.getScheduleName();
     String getEndTime = await Session.getEndTime();
     String getWorkLocation = await Session.getWorkLocation();
     String getJamMasuk = await Session.getJamMasuk();
@@ -556,6 +566,8 @@ class AppHelper{
     String getScheduleID = await Session.getScheduleID();
     String getJamMasukSebelum = await Session.getJamMasukSebelum();
     String getJamKeluarSebelum = await Session.getJamKeluarSebelum();
+    String getPIN = await Session.getPIN();
+    String getScheduleBtn = await Session.getScheduleBtn();
     return [
       getEmail, //0,
       getUsername, //1
@@ -563,7 +575,7 @@ class AppHelper{
       getKaryawanNama, //3
       getKaryawanNo, //4,
       getKaryawanJabatan, //5
-      getScheduleMessage, //6
+      getScheduleName, //6
       getStartTime, //7
       getEndTime, //8
       getWorkLocation, //9
@@ -575,6 +587,8 @@ class AppHelper{
       getScheduleID, //15
       getJamMasukSebelum, //16
       getJamKeluarSebelum, //17
+      getPIN, //18
+      getScheduleBtn, //19
     ];
 
   }

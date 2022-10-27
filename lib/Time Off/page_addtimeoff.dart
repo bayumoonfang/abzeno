@@ -182,9 +182,17 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
       }
     }
 
-    if(_dateto.text == '' || _dateto.text == '') {
+    if(_dateto.text == '' || _datefrom.text == '') {
       AppHelper().showFlushBarsuccess(
           context, "Tanggal tidak boleh kosong");
+      EasyLoading.dismiss();
+      setState(() {
+        _isPressed = false;
+      });
+      return false;
+    } else if(_description.text == '') {
+      AppHelper().showFlushBarsuccess(
+          context, "Description tidak boleh kosong");
       EasyLoading.dismiss();
       setState(() {
         _isPressed = false;
@@ -260,17 +268,27 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                     "Maaf data approval anda belum lengkap,silahkan hubungi HRD terkait hal ini");
                 return;
               } else if (data["message"] == '2') {
+                AppHelper().showFlushBarsuccess(context,
+                    "Maaf anda masih ada request attendance yang belum di tindaklanjuti  di hari yang sama,"
+                        "silahkan batalkan request attendance atau tunggu pengajuan di approved");
+                return;
+              } else if (data["message"] == '3') {
+                AppHelper().showFlushBarsuccess(context,
+                    "Maaf anda masih ada pengajuan Time Off yang belum di tindaklanjuti  di hari yang sama,"
+                        "silahkan batalkan pengajuan Time Off atau tunggu pengajuan di approved");
+                return;
+              } else if (data["message"] == '4') {
+                AppHelper().showFlushBarsuccess(context,
+                    "Maaf ada jadwal OFF di hari atau salah satu hari pengajuan anda");
+                return;
+              } else if (data["message"] == '5') {
                 Navigator.pop(context);
                 Navigator.pop(context);
                 SchedulerBinding.instance?.addPostFrameCallback((_) {
                   AppHelper().showFlushBarconfirmed(context,
                       "Time Off Request has been posted, waiting for approval");
                 });
-              } else if (data["message"] == '3') {
-                AppHelper().showFlushBarsuccess(context,
-                    "Maaf anda masih ada request yang belum di approval di hari yang sama");
-                return;
-              } else {
+              }  else {
                 AppHelper().showFlushBarsuccess(context, data["message"]);
                 return;
               }
@@ -294,7 +312,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
       },
     );
     AlertDialog alert = AlertDialog(
-      title: Text("Create Time Off Request", style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),
+      title: Text("Create Time Off Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
       content: Text("Would you like to continue create this request ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
@@ -592,22 +610,22 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
               border: Border.all(
-                  color: Colors.black54, // Set border color
+                  color: Colors.black26, // Set border color
                   width: 1),
               borderRadius: BorderRadius.all(
                   Radius.circular(5))// Make rounded corner of border
           ),child:  Row(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                    Text("Saldo", style: GoogleFonts.nunito(fontSize: 15,fontWeight: FontWeight.bold)),
-                    Text(saldoTimeOff.toString()+" Hari", style: GoogleFonts.nunito(fontSize: 15,fontWeight: FontWeight.bold))
+                    Text("Saldo", style: GoogleFonts.workSans(fontSize: 15,fontWeight: FontWeight.bold)),
+                    Text(saldoTimeOff.toString()+" Hari", style: GoogleFonts.workSans(fontSize: 15,fontWeight: FontWeight.bold))
                 ]),
 
 
         )
                   ) : Container(),
 
-                  Padding(padding: const EdgeInsets.only(top: 25, right: 25),
+                  Padding(padding: const EdgeInsets.only(top: 15, right: 25),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment
                           .spaceBetween,
@@ -678,7 +696,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                                 child:
                                 needTime == 'Yes' ?
                                 TextFormField(
-                                  style: GoogleFonts.nunito(fontSize: 16),
+                                  style: GoogleFonts.workSans(fontSize: 16),
                                   textCapitalization: TextCapitalization
                                       .sentences,
                                   controller: _TimeStart,
@@ -686,7 +704,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                                     contentPadding: const EdgeInsets.only(
                                         top: 2),
                                     hintText: 'Pick Time',
-                                    labelText: 'Time',
+                                    labelText: 'Start Time',
                                     labelStyle: TextStyle(
                                         fontFamily: "VarelaRound",
                                         fontSize: 16.5, color: Colors.black87
@@ -744,7 +762,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                               padding: const EdgeInsets.only(right: 15),
                               child:
                               TextFormField(
-                                style: GoogleFonts.nunito(fontSize: 16),
+                                style: GoogleFonts.workSans(fontSize: 16),
                                 textCapitalization: TextCapitalization
                                     .sentences,
                                 controller: _dateto,
@@ -807,7 +825,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                               child:
                               needTime == 'Yes' ?
                               TextFormField(
-                                style: GoogleFonts.nunito(fontSize: 16),
+                                style: GoogleFonts.workSans(fontSize: 16),
                                 textCapitalization: TextCapitalization
                                     .sentences,
                                 controller: _TimeEnd,
@@ -815,7 +833,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                                   contentPadding: const EdgeInsets.only(
                                       top: 2),
                                   hintText: 'Pick Time',
-                                  labelText: 'Time',
+                                  labelText: 'End Time',
                                   labelStyle: TextStyle(
                                       fontFamily: "VarelaRound",
                                       fontSize: 16.5, color: Colors.black87
@@ -873,10 +891,10 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 0),
                               child: TextFormField(
-                                style: GoogleFonts.nunito(fontSize: 16),
+                                style: GoogleFonts.workSans(fontSize: 16),
                                 textCapitalization: TextCapitalization
                                     .sentences,
-                                maxLines: 2,
+                                maxLines: 3,
                                 controller: _description,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.only(
@@ -913,14 +931,14 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                   ),
 
 
-                  Padding(padding: const EdgeInsets.only(top: 8),
+                  Padding(padding: const EdgeInsets.only(top: 15),
                       child: Column(
                         children: [
                           Align(alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 0),
                               child: TextFormField(
-                                style: GoogleFonts.nunito(fontSize: 16),
+                                style: GoogleFonts.workSans(fontSize: 16),
                                 textCapitalization: TextCapitalization
                                     .sentences,
                                 controller: _delegate,
@@ -989,7 +1007,7 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 0),
                               child: TextFormField(
-                                style: GoogleFonts.nunito(fontSize: 16),
+                                style: GoogleFonts.workSans(fontSize: 16),
                                 textCapitalization: TextCapitalization
                                     .sentences,
                                 controller: _uploadme,

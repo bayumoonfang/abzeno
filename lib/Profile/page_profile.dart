@@ -7,6 +7,7 @@ import 'package:abzeno/Profile/page_attendancehistory.dart';
 import 'package:abzeno/Profile/page_changepin.dart';
 import 'package:abzeno/Profile/page_fullprofile.dart';
 import 'package:abzeno/helper/page_route.dart';
+import 'package:abzeno/page_intoduction.dart';
 import 'package:abzeno/page_login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _Profile extends State<Profile>{
       preferences.setString("karyawan_nama", '');
       preferences.setString("karyawan_no", '');
       preferences.commit();
-      Navigator.pushReplacement(context, ExitPage(page: PageLogin()));
+      Navigator.pushReplacement(context, ExitPage(page: Introduction()));
     });
   }
 

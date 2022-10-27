@@ -118,9 +118,9 @@ class Session {
     return value18;
   }
 
-  static getScheduleMessage() async {
+  static getScheduleName() async {
     final SharedPreferences preferences = await _prefs;
-    var value19 = preferences.getString('getScheduleMessage');
+    var value19 = preferences.getString('getScheduleName');
     return value19;
   }
 
@@ -128,6 +128,18 @@ class Session {
     final SharedPreferences preferences = await _prefs;
     var value20 = preferences.getString('getScheduleID');
     return value20;
+  }
+
+  static getPIN() async {
+    final SharedPreferences preferences = await _prefs;
+    var value21 = preferences.getString('getPIN');
+    return value21;
+  }
+
+  static getScheduleBtn() async {
+    final SharedPreferences preferences = await _prefs;
+    var value22 = preferences.getString('getScheduleBtn');
+    return value22;
   }
 
 }

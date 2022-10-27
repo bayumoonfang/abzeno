@@ -158,9 +158,8 @@ class _AddRequestAttendance extends State<AddRequestAttendance> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Add Attendance "+widget.getType, style: GoogleFonts.nunito(fontSize: 17),),
-        elevation: 0,
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Add Attendance "+widget.getType, style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         leading: Builder(
           builder: (context) =>
               IconButton(

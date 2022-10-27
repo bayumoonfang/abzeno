@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'dart:ui';
 
 
+import 'package:abzeno/MySchedule/page_myschedule.dart';
+import 'package:abzeno/Profile/page_changepin.dart';
 import 'package:abzeno/Request%20Attendance/page_reqattendancehome.dart';
 import 'package:abzeno/attendance/page_doattendance.dart';
 import 'package:abzeno/page_changecabang.dart';
@@ -38,20 +40,21 @@ class Home2 extends StatefulWidget{
   final String getKaryawanNama;
   final String getKaryawanJabatan;
   final String getKaryawanNo;
-  final String getScheduleMessage;
+  final String getScheduleName;
   final String getStartTime;
   final String getEndTime;
   final String getScheduleID;
   final String getJamMasukSebelum;
   final String getJamKeluarSebelum;
-
+  final String getPIN;
+  final String getScheduleBtn;
   const Home2(this.getKaryawanNama, this.getKaryawanJabatan, this.getKaryawanNo,
-      this.getScheduleMessage,
+      this.getScheduleName,
       this.getStartTime,
       this.getEndTime,
       this.getScheduleID,
       this.getJamMasukSebelum,
-      this.getJamKeluarSebelum);
+      this.getJamKeluarSebelum,this.getPIN, this.getScheduleBtn);
   @override
   _Home2 createState() => _Home2();
 }
@@ -170,7 +173,7 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                             top: 90, right: 0, left:0, child:
                         Align(
                           alignment: Alignment.bottomLeft,
-                          child:  Text("Halo,", style: TextStyle(color: Colors.white,
+                          child:  Text('Halo', style: TextStyle(color: Colors.white,
                               fontFamily: 'VarelaRound', fontSize: 12,
                               fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
                         )),
@@ -227,7 +230,9 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                 ),
                               ),
 
-                              widget.getScheduleMessage.toString() != '0' ?
+                              widget.getScheduleID.toString() == '1' || widget.getScheduleID.toString() == '2' ||
+                                  widget.getScheduleID.toString() == '3' || widget.getScheduleID.toString() == '4' ||
+                                  widget.getScheduleID.toString() == '5'?
                               Padding(padding: const EdgeInsets.only(top: 8,left: 25,right: 25),
                                   child: Align(
                                     alignment: Alignment.center,
@@ -257,10 +262,9 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                     ),
                                   )
                               ) :
-
                               Padding(padding: const EdgeInsets.only(top: 8,left: 25,right: 25),
                                 child: Text(
-                                   'Time Off',
+                                    widget.getScheduleName.toString(),
                                     style: GoogleFonts.nunito(fontSize: 17,fontWeight: FontWeight.bold)
                                 ),
                               ),
@@ -294,11 +298,12 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                       spacing: 30,
                                       children: [
                                         Container(
-                                            width: 90,
+                                            width: 98,
                                             height: 35,
                                             child:
-                                            widget.getScheduleMessage.toString() != '0' && getJamMasuk.toString() == '0' ?
-                                            ElevatedButton(child : Text("Clock In",style: GoogleFonts.nunito(color: Colors.white,fontSize: 13),),
+                                            widget.getScheduleBtn.toString() != 'disable' && getJamMasuk.toString() == '0' ?
+                                            ElevatedButton(child : Text("Clock In",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                                fontSize: 14),),
                                               style: ElevatedButton.styleFrom(
                                                   primary: HexColor("#075E54"),
                                                   elevation: 0,
@@ -311,13 +316,22 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                                   )),
                                               onPressed: (){
                                                 EasyLoading.show(status: "Loading...");
-                                                Navigator.push(context, ExitPage(page: PageClockIn(widget.getKaryawanNo, getJam, getWorkLocationId, AppHelper().getNamaHari().toString(),getWorkLat.toString(),getWorkLong.toString(),widget.getScheduleID.toString(),
-                                                "Clock In",widget.getKaryawanNama.toString(),
-                                                    widget.getKaryawanJabatan.toString()))).then(onGoBack);
+                                                Navigator.push(context, ExitPage(page: PageClockIn(
+                                                  widget.getKaryawanNo,
+                                                  getJam, getWorkLocationId,AppHelper().getNamaHari().toString(),
+                                                  getWorkLat.toString(),
+                                                  getWorkLong.toString(),"Clock In",
+                                                  widget.getKaryawanNama.toString(),
+                                                  widget.getKaryawanJabatan.toString(),
+                                                    widget.getStartTime.toString(),
+                                                    widget.getEndTime.toString(),
+                                                    widget.getScheduleName
+                                                ))).then(onGoBack);
                                               },) :
                                             Opacity(
                                                 opacity: 0.6,
-                                                child : ElevatedButton(child : Text("Clock In",style: GoogleFonts.nunito(color: Colors.black,fontSize: 13),),
+                                                child : ElevatedButton(child : Text("Clock In",style: GoogleFonts.lexendDeca(color: Colors.black,fontWeight: FontWeight.bold,
+                                                    fontSize: 14),),
                                                   style: ElevatedButton.styleFrom(
                                                       elevation: 0,
                                                       primary: HexColor("#DDDDDD"),
@@ -330,11 +344,13 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                             )
                                         ),
                                         Container(
-                                            width: 90,
+                                            width: 98,
                                             height: 35,
                                             child:
-                                            widget.getScheduleMessage.toString() != '0' && getJamMasuk.toString() != '0' && getJamKeluar.toString() == '00:00' ?
-                                            ElevatedButton(child : Text("Clock Out",style: GoogleFonts.nunito(color: Colors.white,fontSize: 13),),
+                                            widget.getScheduleBtn.toString() != 'disable'
+                                                && getJamMasuk.toString() != '0' && getJamKeluar.toString() == '00:00' ?
+                                            ElevatedButton(child : Text("Clock Out",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                                fontSize: 14),),
                                               style: ElevatedButton.styleFrom(
                                                   elevation: 0,
                                                   primary: HexColor("#075E54"),
@@ -346,13 +362,22 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                                     borderRadius: BorderRadius.circular(5.0),
                                                   )),onPressed: (){
                                                 EasyLoading.show(status: "Loading...");
-                                                    Navigator.push(context, ExitPage(page: PageClockIn(widget.getKaryawanNo, getJam, getWorkLocationId, AppHelper().getNamaHari().toString(),getWorkLat.toString(),getWorkLong.toString(),widget.getScheduleID.toString(),
-                                                "Clock Out",widget.getKaryawanNama.toString(),
-                                                    widget.getKaryawanJabatan.toString()))).then(onGoBack);
+                                                Navigator.push(context, ExitPage(page: PageClockIn(
+                                                    widget.getKaryawanNo,
+                                                    getJam, getWorkLocationId,AppHelper().getNamaHari().toString(),
+                                                    getWorkLat.toString(),
+                                                    getWorkLong.toString(),"Clock Out",
+                                                    widget.getKaryawanNama.toString(),
+                                                    widget.getKaryawanJabatan.toString(),
+                                                    widget.getStartTime.toString(),
+                                                    widget.getEndTime.toString(),
+                                                  widget.getScheduleName
+                                                ))).then(onGoBack);
                                                 },) :
                                             Opacity(
                                                 opacity: 0.6,
-                                                child : ElevatedButton(child : Text("Clock Out",style: GoogleFonts.nunito(color: Colors.black,fontSize: 13),),
+                                                child : ElevatedButton(child : Text("Clock Out",style: GoogleFonts.lexendDeca(color: Colors.black,fontWeight: FontWeight.bold,
+                                                    fontSize: 14),),
                                                   style: ElevatedButton.styleFrom(
                                                       elevation: 0,
                                                       primary: HexColor("#DDDDDD"),
@@ -379,13 +404,43 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                 SizedBox(
                   height: 25,
                 ),
+
+  
+
                 Padding(
-                    padding: const EdgeInsets.only(top: 435,left: 25,right: 25),
+                    padding:
+                    widget.getPIN == AppHelper().default_pass ?
+                    const EdgeInsets.only(top: 415,left: 25,right: 25) : const EdgeInsets.only(top: 435,left: 25,right: 25),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        widget.getPIN == AppHelper().default_pass ?
+                        Container(
+                          height: 72,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: HexColor("#ffeaef"),
+                          ),
+                          child:InkWell(
+                            onTap: (){
+                              Navigator.push(context, ExitPage(page: ChangePIN(widget.getKaryawanNo)));
+                            },
+                            child:  ListTile(
+                              title: Text("You Have Default PIN",style: GoogleFonts.montserrat(color: Colors.black,fontWeight: FontWeight.bold,
+                                  fontSize: 15),),
+                              subtitle: Text("Lets change your PIN to more security",style: GoogleFonts.montserrat(
+                                  color: Colors.black,
+                                  fontSize: 12)),
+                              trailing: FaIcon(FontAwesomeIcons.angleRight,size: 15,),
+                            ),
+                          )
+                        ) : Container(),
+                        widget.getPIN == AppHelper().default_pass ?
+                        SizedBox(
+                          height: 30,
+                        ) : Container(),
                         Wrap(
-
                           spacing: 35,
                           runSpacing: 30,
                           children: [
@@ -393,7 +448,6 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                               onTap: (){
                                // EasyLoading.show(status: "Loading...");
                                 Navigator.push(context, ExitPage(page: PageTimeOffHome(widget.getKaryawanNo,widget.getKaryawanNama.toString())));
-
                               },
                               child:Column(
                                 children: [
@@ -520,13 +574,14 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                       )
                                   ),
                                   Padding(padding: const EdgeInsets.only(top:8),
-                                    child: Text("Attendance", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
+                                    child: Text("Request", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
                                 ],
                               ),
                             ),
 
                             InkWell(
                               onTap: (){
+                                Navigator.push(context, ExitPage(page: MySchedule(widget.getKaryawanNo)));
 
                               },
                               child:Column(
@@ -543,11 +598,11 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                                         ),
                                       ),
                                       child: Center(
-                                        child: FaIcon(FontAwesomeIcons.clipboard, color: HexColor("#ff8556"), size: 24,),
+                                        child: FaIcon(FontAwesomeIcons.calendarDay, color: HexColor("#ff8556"), size: 24,),
                                       )
                                   ),
                                   Padding(padding: const EdgeInsets.only(top:8),
-                                    child: Text("Reimburs", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
+                                    child: Text("Attendance", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
                                 ],
                               ),
                             ),

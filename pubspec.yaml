@@ -60,6 +60,8 @@ dependencies:
   cloud_functions: ^3.3.9
   photo_view: ^0.14.0
   bottom_navigation_badge: ^1.0.3
+  table_calendar: ^2.2.1
+  introduction_screen: ^2.1.0
 
 
 dev_dependencies:

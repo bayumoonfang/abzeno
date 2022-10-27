@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:abzeno/Helper/app_helper.dart';
 import 'package:abzeno/Helper/app_link.dart';
 import 'package:abzeno/Helper/page_route.dart';
-import 'package:abzeno/Request%20Attendance/page_reqattend_request.dart';
+import 'package:abzeno/Request%20Attendance/page_reqattend_gantishift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -38,102 +38,7 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
 
   var selectedTimeStart;
   var selectedTimeEnd;
-  bool _isPressed = false;
-  _addreq_attend() async {
-    EasyLoading.show(status: "Loading...");
-    final response = await http.post(
-        Uri.parse(applink + "mobile/api_mobile.php?act=add_reqattend"),
-        body: {
-          "changepin_id": widget.getKaryawanNo,
-          "changepin_value": _datefrom.text,
-        }).timeout(Duration(seconds: 20), onTimeout: () {
-      http.Client().close();
-      AppHelper().showFlushBarerror(
-          context, "Koneksi Terputus, silahkan ulangi sekali lagi");
-      EasyLoading.dismiss();
-      return http.Response('Error', 500);
-    });
-
-    Map data = jsonDecode(response.body);
-    setState(() {
-      if (data["message"] != '') {
-        EasyLoading.dismiss();
-        if (data["message"] == '1') {
-          _datefrom.clear();
-          Navigator.pop(context);
-          Navigator.pop(context);
-          SchedulerBinding.instance?.addPostFrameCallback((_) {
-            AppHelper().showFlushBarconfirmed(context,
-                "PIN has been changed");
-          });
-          return;
-        }
-
-      }
-    });
-
-  }
-
-
-
-  showDialogme(BuildContext context) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    if(_datefrom.text == "") {
-      AppHelper().showFlushBarsuccess(context, "Tanggal tidak boleh kosong");
-      setState(() {
-        _isPressed = false;
-      });
-      return false;
-    } else  if(_TimeStart.text == "") {
-      AppHelper().showFlushBarsuccess(context, "Jam tidak boleh kosong");
-      setState(() {
-        _isPressed = false;
-      });
-      return false;
-    } else  if(_TimeEnd.text == "") {
-      AppHelper().showFlushBarsuccess(context, "Jam tidak boleh kosong");
-      setState(() {
-        _isPressed = false;
-      });
-      return false;
-    } else if (getNameShift == 'null') {
-      AppHelper().showFlushBarsuccess(context, "Request Attendance cant be processed");
-      setState(() {
-        _isPressed = false;
-      });
-      return false;
-    }
-
-
-    Widget cancelButton = TextButton(
-      child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
-      onPressed:  () {Navigator.pop(context);},
-    );
-    Widget continueButton = TextButton(
-      child: Text("Yes", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#1a76d2"))),
-      onPressed:  () {
-        _addreq_attend();
-      },
-    );
-    AlertDialog alert = AlertDialog(
-      title: Text("Add Attendance Request", style: GoogleFonts.nunito(fontSize: 18,fontWeight: FontWeight.bold)),
-      content: Text("Would you like to continue add attendance request ?", style: GoogleFonts.nunitoSans(),),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
   var startDate;
-
-
   String getNameShift = "...";
   String getClockIn = "...";
   String getClockOut = "...";
@@ -159,7 +64,9 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
   String dropdownvalue = 'Correction';
   var items = [
     'Correction',
-    'Request'
+    'Ganti Shift',
+    'Lembur in Same Day',
+    'Lembur in Another Day'
   ];
 
 
@@ -168,8 +75,8 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Add Attendance Request", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Add Attendance", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) =>
@@ -186,7 +93,7 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
         child: Column(
           children: [
             TextFormField(
-              style: GoogleFonts.nunito(fontSize: 16),
+              style: GoogleFonts.workSans(fontSize: 16),
               textCapitalization: TextCapitalization.sentences,
               controller: _datefrom,
               decoration: InputDecoration(
@@ -257,15 +164,15 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
                  DropdownButton(
                    isExpanded: false,
                    hint: Text("Choose time off type",
-                     style: GoogleFonts.nunito(
-                         fontSize: 16, color: Colors.black),),
+                     style: GoogleFonts.workSans(
+                         fontSize: 15, color: Colors.black),),
                    value: dropdownvalue,
                    items: items.map((String items) {
                      return DropdownMenuItem(
                        value: items,
                        child: Text(items,
-                           style: GoogleFonts.nunito(
-                               fontSize: 16, color: Colors.black)),
+                           style: GoogleFonts.workSans(
+                               fontSize: 15, color: Colors.black)),
                      );
                    }).toList(),
                    onChanged: (value) {
@@ -285,7 +192,7 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
             Padding(
               padding: EdgeInsets.only(top: 25),
               child:  TextFormField(
-                style: GoogleFonts.nunito(fontSize: 16),
+                style: GoogleFonts.workSans(fontSize: 16),
                 textCapitalization: TextCapitalization
                     .sentences,
                 maxLines: 4,
@@ -324,9 +231,9 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
         )
       ),
       bottomSheet: Container(
-          padding: EdgeInsets.only(left: 25, right: 25, bottom: 10),
+          padding: EdgeInsets.only(left: 45, right: 45, bottom: 10),
           width: double.infinity,
-          height: 55,
+          height: 58,
           child:
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -339,7 +246,8 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
                 ),
                   borderRadius: BorderRadius.circular(5.0),
                 )),
-            child: Text("Next"),
+            child: Text("Next",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                fontSize: 14),),
             onPressed: () {
               FocusScope.of(context).requestFocus(new FocusNode());
               if(_datefrom.text == "") {
@@ -354,8 +262,8 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
                 if(dropdownvalue.toString() == 'Correction') {
                   Navigator.push(context, ExitPage(page: CorrectionAttendance(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
                       _datefrom.text)));
-                } else {
-                  Navigator.push(context, ExitPage(page: RequestAttendance(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
+                } else if(dropdownvalue.toString() == 'Ganti Shift')  {
+                  Navigator.push(context, ExitPage(page: RequestGantiShift(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
                       _datefrom.text)));
                 }
 

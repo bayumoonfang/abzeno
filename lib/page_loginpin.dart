@@ -5,12 +5,14 @@
 import 'dart:convert';
 
 
+import 'package:abzeno/page_check.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'helper/app_helper.dart';
@@ -71,7 +73,7 @@ class _PageLoginPIN extends State<PageLoginPIN> {
       } else {
         savePref(widget.getEmail, data["username"].toString(), data["karyawan_id"].toString(), data["karyawan_nama"].toString(), data["karyawan_no"].toString(),
             data["karyawan_jabatan"].toString());
-        Navigator.pushReplacement(context, ExitPage(page: Home()));
+        Navigator.pushReplacement(context, ExitPage(page: PageCheck()));
       }
     }
   }
@@ -167,7 +169,7 @@ class _PageLoginPIN extends State<PageLoginPIN> {
                Align(alignment: Alignment.center,
                    child : Padding(padding: const EdgeInsets.only(top: 50),child: Text("Login With Your PIN",style:
                    GoogleFonts.poppins(fontWeight: FontWeight.bold,
-                       fontSize: 20),),)),
+                       fontSize: 28, color: Colors.black),),)),
                Align(alignment: Alignment.center,
                    child : Padding(padding: const EdgeInsets.only(top: 3),child: Text("Masukan 6 digit PIN untuk masuk ke akun anda"
                      ,style: GoogleFonts.lato(fontSize: 13),),)),

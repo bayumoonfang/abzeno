@@ -50,8 +50,8 @@ class _PageReqAttendanceHome extends State<PageReqAttendanceHome> with SingleTic
     return WillPopScope(child: Scaffold(
       appBar: new AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
-        backgroundColor: HexColor(AppHelper().main_color),
-        title: Text("Request Attendance", style: GoogleFonts.nunito(fontSize: 17),),
+        backgroundColor: HexColor("#3a5664"),
+        title: Text("Add Attendance", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
@@ -65,8 +65,8 @@ class _PageReqAttendanceHome extends State<PageReqAttendanceHome> with SingleTic
         bottom: new TabBar(
           indicatorColor: Colors.white,
           controller: controller,
-          labelStyle: GoogleFonts.varelaRound(fontWeight: FontWeight.bold,fontSize: 15),
-            unselectedLabelStyle: GoogleFonts.varelaRound(fontSize: 13),
+          labelStyle: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold,fontSize: 15),
+          unselectedLabelStyle: GoogleFonts.varelaRound(fontSize: 13),
             //unselectedLabelColor: Colors.white,
           tabs: <Widget>[
             new Tab(text: "My Request"),

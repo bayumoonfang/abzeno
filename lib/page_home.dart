@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 
+import 'package:abzeno/Notification/page_notification.dart';
 import 'package:abzeno/Profile/page_profile.dart';
 import 'package:abzeno/attendance/page_doattendance.dart';
 import 'package:abzeno/page_changecabang.dart';
@@ -52,12 +53,13 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
   String getKaryawanNama = "...";
   String getKaryawanJabatan = "...";
   String getKaryawanNo = "...";
-  String getScheduleMessage = "...";
+  String getScheduleName = "...";
   String getStartTime = "...";
   String getEndTime = "...";
-
-
+  String getPIN = "...";
+  String getEmail = "...";
   String getScheduleID = "...";
+  String getScheduleBtn = "...";
 
 
   String getJamMasukSebelum = "...";
@@ -78,13 +80,15 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
         getKaryawanNama = value[3];
         getKaryawanJabatan = value[5];
         getKaryawanNo = value[4];
-
-        getScheduleMessage = value[6];
+        getEmail = value[0];
+        getScheduleName = value[6];
         getStartTime = value[7];
         getEndTime = value[8];
-
+        getScheduleID = value[15];
         getJamMasukSebelum = value[16];
         getJamKeluarSebelum = value[17];
+        getPIN = value[18];
+        getScheduleBtn = value[19];
       });});
 
     await getNotif();
@@ -102,8 +106,12 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 4);
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => (){
-      getNotif();
+    setState(() {
+      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => (){
+        setState(() {
+          getNotif();
+        });
+      });
     });
     loadData2();
   }
@@ -121,14 +129,14 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
           children: <Widget>[
             //kemudian panggil halaman sesuai tab yang sudah dibuat
             Home2(getKaryawanNama, getKaryawanJabatan, getKaryawanNo,
-              getScheduleMessage,
+                getScheduleName,
               getStartTime,
               getEndTime,
               getScheduleID,
               getJamMasukSebelum,
-              getJamKeluarSebelum),
+              getJamKeluarSebelum,getPIN,getScheduleBtn),
             Container(color: Colors.red,),
-            Container(color: Colors.green,),
+            PageNotification(getEmail),
             Profile(getKaryawanNama, getKaryawanJabatan, getKaryawanNo)
             //PageMyApproval(widget.getKaryawanNo, widget.getKaryawanNama),
           ],
@@ -144,22 +152,22 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: 'Message',
+              icon: FaIcon(FontAwesomeIcons.fileSignature),
+              label: 'Approval',
             ),
             BottomNavigationBarItem(
               icon:
     getNotifCountme != "0" ?
               Badge(
                 showBadge: true,
-                badgeContent: Text(getNotifCountme.toString(), style: const TextStyle(color: Colors.white)),
+                //badgeContent: Text(getNotifCountme.toString(), style: const TextStyle(color: Colors.white)),
                 animationType:  BadgeAnimationType.scale,
                 shape: BadgeShape.circle,
-                //position: BadgePosition.center(),
-                child: const FaIcon(FontAwesomeIcons.bell),
+                position: BadgePosition.topEnd(top: 0,end: -1),
+                child: const FaIcon(FontAwesomeIcons.calendar),
               ) :
-              FaIcon(FontAwesomeIcons.bell),
-              label: 'Notification',
+              FaIcon(FontAwesomeIcons.calendar),
+              label: 'Activity',
             ),
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.user),
