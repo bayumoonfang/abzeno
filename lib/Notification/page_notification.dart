@@ -105,12 +105,12 @@ class _PageNotification extends State<PageNotification> {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
         backgroundColor: HexColor("#3a5664"),
-        title: Text("Activity", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
+        title: Text("Activity",overflow: TextOverflow.ellipsis, style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
         actions: [
           Padding(padding: EdgeInsets.only(right: 10,top: 4),
           child: TextButton(
-            child: Text("Mark All As Read", style: GoogleFonts.workSans(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white)),
+            child: Text("Mark All As Read",overflow: TextOverflow.ellipsis, style: GoogleFonts.workSans(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.white)),
             onPressed: (){
               showDialogAllRead(context);
             },
@@ -120,12 +120,44 @@ class _PageNotification extends State<PageNotification> {
       body: RefreshIndicator(
         onRefresh: getData,
         child : Container(
+            padding: EdgeInsets.only(left: 15,right: 15,top: 10),
             width: double.infinity,
             height: double.infinity,
             color: Colors.white,
             child : Column(
               children: [
-                Padding(padding: const EdgeInsets.only(top: 10),),
+                Padding(padding: const EdgeInsets.only(bottom: 15,top: 5),
+                    child: Container(
+                      height: 50,
+                      child: TextFormField(
+                        enableInteractiveSelection: false,
+                        onChanged: (text) {
+                          setState(() {
+                            filter = text;
+                          });
+                        },
+                        style: GoogleFonts.nunito(fontSize: 15),
+                        decoration: new InputDecoration(
+                          contentPadding: const EdgeInsets.all(10),
+                          fillColor: HexColor("#f4f4f4"),
+                          filled: true,
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white, width: 1.0,),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          hintText: 'Cari Activity...',
+                        ),
+                      ),
+                    )
+                ),
                 Expanded(
                     child: FutureBuilder(
                       future: getData(),
@@ -145,9 +177,9 @@ class _PageNotification extends State<PageNotification> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: <Widget>[
-                                      Image.asset('assets/notfound.png',width: 250,),
+                                      Image.asset('assets/nodata.png',width: 150,),
                                       new Text(
-                                        "No Time Off Request",
+                                        "Data Not Found",
                                         style: new TextStyle(
                                             fontFamily: 'VarelaRound', fontSize: 15),
                                       ),
@@ -156,43 +188,11 @@ class _PageNotification extends State<PageNotification> {
                               :
                           Column(
                             children: [
-                              Padding(padding: const EdgeInsets.only(left: 15,top: 10,right: 15,bottom: 10),
-                                  child: Container(
-                                    height: 50,
-                                    child: TextFormField(
-                                      enableInteractiveSelection: false,
-                                      onChanged: (text) {
-                                        setState(() {
-                                          filter = text;
-                                        });
-                                      },
-                                      style: GoogleFonts.nunito(fontSize: 15),
-                                      decoration: new InputDecoration(
-                                        contentPadding: const EdgeInsets.all(10),
-                                        fillColor: HexColor("#f4f4f4"),
-                                        filled: true,
-                                        prefixIcon: Padding(
-                                          padding: const EdgeInsets.only(bottom: 4),
-                                          child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Colors.white, width: 1.0,),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        hintText: 'Cari My Notification...',
-                                      ),
-                                    ),
-                                  )
-                              ),
                               Expanded(
                                 child: ListView.builder(
-                                  //itemExtent: 92,
+                                  itemExtent: 92,
                                   itemCount: snapshot.data == null ? 0 : snapshot.data?.length,
-                                  padding: const EdgeInsets.only(left: 10,right: 15,bottom: 85),
+                                  padding: const EdgeInsets.only(bottom: 85),
                                   itemBuilder: (context, i) {
                                     return Column(
                                       children: [
@@ -277,6 +277,7 @@ class _PageNotification extends State<PageNotification> {
                       },
                     )
                 ),
+                SizedBox(height: 15,)
               ],
             )
         )

@@ -59,9 +59,16 @@ class _MySchedule extends State<MySchedule> {
             ];
           } else {
             if(item['setttimeoff_name'].toString() == 'null') {
-              _events[dt] = [
-                item['reqattend_description'].toString(),item['attend_description'].toString()
-              ];
+              if(item['reqattend_description'].toString() == 'null') {
+                _events[dt] = [
+                  "-",item['attend_description'].toString()
+                ];
+              } else {
+                _events[dt] = [
+                  item['reqattend_description'].toString(),item['attend_description'].toString()
+                ];
+              }
+
             } else {
               _events[dt] = [
                 item['setttimeoff_name'].toString(),item['attend_description'].toString()

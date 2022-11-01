@@ -18,6 +18,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'page_reqattend_correction.dart';
+import 'page_reqattend_lemburanotherday.dart';
+import 'page_reqattend_lembursameday.dart';
 
 class AddRequestAttendance2 extends StatefulWidget{
   final String getKaryawanNo;
@@ -265,8 +267,13 @@ class _AddRequestAttendance2 extends State<AddRequestAttendance2> {
                 } else if(dropdownvalue.toString() == 'Ganti Shift')  {
                   Navigator.push(context, ExitPage(page: RequestGantiShift(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
                       _datefrom.text)));
+                } else if(dropdownvalue.toString() == 'Lembur in Same Day')  {
+                  Navigator.push(context, ExitPage(page: RequestLemburSameDay(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
+                      _datefrom.text)));
+                } else if(dropdownvalue.toString() == 'Lembur in Another Day')  {
+                  Navigator.push(context, ExitPage(page: RequestLemburAnotherDay(widget.getKaryawanNo, dropdownvalue.toString(), startDate.toString(), _description.text,
+                      _datefrom.text)));
                 }
-
               }
             },
           )

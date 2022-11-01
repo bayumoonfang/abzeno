@@ -21,19 +21,19 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 
-class CorrectionAttendance extends StatefulWidget{
+class RequestLemburSameDay extends StatefulWidget{
   final String getKaryawanNo;
   final String getType;
   final String getDate;
   final String getDescription;
   final String getDate2;
-  const CorrectionAttendance(this.getKaryawanNo, this.getType, this.getDate, this.getDescription, this.getDate2);
+  const RequestLemburSameDay(this.getKaryawanNo, this.getType, this.getDate, this.getDescription, this.getDate2);
   @override
-  _CorrectionAttendance createState() => _CorrectionAttendance();
+  _RequestLemburSameDay createState() => _RequestLemburSameDay();
 }
 
 
-class _CorrectionAttendance extends State<CorrectionAttendance> {
+class _RequestLemburSameDay extends State<RequestLemburSameDay> {
   TextEditingController _TimeStart = TextEditingController();
   TextEditingController _TimeEnd = TextEditingController();
   var selectedTimeStart;
@@ -54,7 +54,6 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
       return http.Response('Error', 500);
     }
     );
-
     Map data = jsonDecode(response.body);
     setState(() {
       EasyLoading.dismiss();
@@ -67,9 +66,9 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
   }
 
   String getAttenceMessage = "...";
-  getAttendanceDetail() async {
+  getAttendanceCheck() async {
     final response = await http.get(Uri.parse(
-        applink + "mobile/api_mobile.php?act=getAttendanceCheck&karyawanNo=" +
+        applink + "mobile/api_mobile.php?act=getAttendanceCheckGantiShift&karyawanNo=" +
             widget.getKaryawanNo+"&getDate="+widget.getDate)).timeout(
         Duration(seconds: 10), onTimeout: () {
       AppHelper().showFlushBarsuccess(context, "Koneksi terputus..");
@@ -77,6 +76,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
       return http.Response('Error', 500);
     }
     );
+
     Map data = jsonDecode(response.body);
     setState(() {
       getAttenceMessage = data["message"].toString();
@@ -87,11 +87,17 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
     });
   }
 
+
+
+
+
+
   @override
   void initState() {
     super.initState();
     EasyLoading.show(status: "Waiting for Attendance Check...");
-    getAttendanceDetail();
+    getAttendanceCheck();
+
   }
 
 
@@ -99,16 +105,13 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
   _addreq_attend() async {
     EasyLoading.show(status: "Loading...");
     final response = await http.post(
-        Uri.parse(applink + "mobile/api_mobile.php?act=add_reqattend"),
+        Uri.parse(applink + "mobile/api_mobile.php?act=add_reqattend_lembursameday"),
         body: {
           "reqattend_karyawan": widget.getKaryawanNo,
           "reqattend_date": widget.getDate,
           "reqattend_type" : widget.getType,
           "reqattend_description" : widget.getDescription,
-          "reqattend_clockin" : _TimeStart.text,
-          "reqattend_clockout" : _TimeEnd.text,
-          "reqattend_scheduleclockin" : getClockIn.toString(),
-          "reqattend_scheduleclockout" : getClockOut.toString()
+          "reqattend_endtime" : _TimeStart.text,
         }).timeout(Duration(seconds: 20), onTimeout: () {
       http.Client().close();
       AppHelper().showFlushBarerror(
@@ -127,7 +130,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
           Navigator.pop(context);
           SchedulerBinding.instance?.addPostFrameCallback((_) {
             AppHelper().showFlushBarconfirmed(context,
-                "Attendance Correction has been posted, and waiting for approval");
+                "Attendance Correction has been posted");
           });
           return;
         }  else if (data["message"] == '0') {
@@ -156,12 +159,6 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
         _isPressed = false;
       });
       return false;
-    } else  if(_TimeEnd.text == "") {
-      AppHelper().showFlushBarsuccess(context, "Jam tidak boleh kosong");
-      setState(() {
-        _isPressed = false;
-      });
-      return false;
     }
 
 
@@ -176,12 +173,15 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
     Widget continueButton = TextButton(
       child: Text("Yes", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#1a76d2"))),
       onPressed:  () {
+        setState(() {
+          _isPressed = true;
+        });
         _addreq_attend();
       },
     );
     AlertDialog alert = AlertDialog(
-      title: Text("Add Attendance Correction", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
-      content: Text("Would you like to continue add attendance correction ?", style: GoogleFonts.nunitoSans(),),
+      title: Text("Add Attendance "+widget.getType, style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
+      content: Text("Would you like to continue add attendance "+widget.getType+" ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
         continueButton,
@@ -235,93 +235,95 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
               width: double.infinity,
               height: double.infinity,
               padding: EdgeInsets.only(left: 25,right: 25),
-                child: getAttenceMessage == "1" ?
-                Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
-                        Text("We find your another attendance request", style: GoogleFonts.nunito(fontSize: 15)),
-                        Text("Please wait for approval or cancel your latest request", style: GoogleFonts.nunito(fontSize: 15))
-                      ]),
+              child: getAttenceMessage == "1" ?
+                        Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                            Text("We find your another attendance request", style: GoogleFonts.nunito(fontSize: 15)),
+                            Text("Please wait for approval or cancel your latest request", style: GoogleFonts.nunito(fontSize: 15))
+                        ]),
                 ) : getAttenceMessage == "2" ?
-                Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
-                        Text("We find your another attendance request", style: GoogleFonts.nunito(fontSize: 15)),
-                        Text("Please choose another date", style: GoogleFonts.nunito(fontSize: 15))
-                      ]),
-                ) : getAttenceMessage == "3" ?
-                Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
-                        Text("We Dont Find Attendance in your date request", style: GoogleFonts.nunito(fontSize: 15)),
-                      ]),
-                ) : getAttenceMessage == "4" ?
-                Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
-                        Text("We Find Another Request in your date", style: GoogleFonts.nunito(fontSize: 15)),
-                        Text("Please wait for approval or cancel your latest request", style: GoogleFonts.nunito(fontSize: 15))
-                      ]),
-                ) :
+              Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                      Text("We find your another attendance request", style: GoogleFonts.nunito(fontSize: 15)),
+                      Text("Please choose another date", style: GoogleFonts.nunito(fontSize: 15))
+                    ]),
+              ) : getAttenceMessage == "3" ?
+              Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                      Text("We Dont Find Attendance in your date request", style: GoogleFonts.nunito(fontSize: 15)),
+                    ]),
+              ) : getAttenceMessage == "4" ?
+              Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Oh Sorry", style: GoogleFonts.nunito(fontSize: 45,fontWeight: FontWeight.bold)),
+                      Text("We Find Another Request in your date", style: GoogleFonts.nunito(fontSize: 15)),
+                      Text("Please wait for approval or cancel your latest request", style: GoogleFonts.nunito(fontSize: 15))
+                    ]),
+              ) :
                  Column(
                    children: [
+
                      Container(
-                       padding: EdgeInsets.only(top:20),
-                       width: double.infinity,
-                       child: Column(
-                         children: [
+                         padding: EdgeInsets.only(top:20),
+                         width: double.infinity,
+                         child: Column(
+                           children: [
 
-                           Text("Schedule",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
-                               color: Colors.black)),
-                           Wrap(
-                             // alignment: WrapAlignment.start,
-                             spacing: 15,
-                             children: [
-                               Container(
-                                 width: 100,
-                                 child:   ListTile(
-                                   title: Text("Schedule",style: GoogleFonts.nunitoSans(fontSize: 12),),
-                                   subtitle: Text(getNameShift.toString() == 'null' ? "OFF" :
-                                   getNameShift.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
-                                       color: Colors.black),),
+                             Text("Current Schedule",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
+                                 color: Colors.black)),
+                             Wrap(
+                               // alignment: WrapAlignment.start,
+                               spacing: 15,
+                               children: [
+                                 Container(
+                                   width: 100,
+                                   child:   ListTile(
+                                     title: Text("Schedule",style: GoogleFonts.nunitoSans(fontSize: 12),),
+                                     subtitle: Text(getNameShift.toString() == 'null' ? "OFF" :
+                                     getNameShift.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
+                                         color: Colors.black),),
+                                   ),
                                  ),
-                               ),
-                               Container(
-                                 width: 100,
-                                 child:   ListTile(
-                                   title: Text("Clock In",style: GoogleFonts.nunitoSans(fontSize: 12),),
-                                   subtitle: Text(getClockIn.toString() == '' ||
-                                       getClockIn.toString() == '0' ? "..." : getClockIn.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
-                                       color: Colors.black),),
+                                 Container(
+                                   width: 100,
+                                   child:   ListTile(
+                                     title: Text("Clock In",style: GoogleFonts.nunitoSans(fontSize: 12),),
+                                     subtitle: Text(getClockIn.toString() == '' ||
+                                         getClockIn.toString() == '0' ? "..." : getClockIn.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
+                                         color: Colors.black),),
+                                   ),
                                  ),
-                               ),
 
-                               Container(
-                                 width: 100,
-                                 child:   ListTile(
-                                   title: Text("Clock Out",style: GoogleFonts.nunitoSans(fontSize: 12),),
-                                   subtitle: Text(getClockOut.toString() == "" || getClockOut.toString() == "0"
-                                       ? "..." : getClockOut.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
-                                       color: Colors.black),),
+                                 Container(
+                                   width: 100,
+                                   child:   ListTile(
+                                     title: Text("Clock Out",style: GoogleFonts.nunitoSans(fontSize: 12),),
+                                     subtitle: Text(getClockOut.toString() == "" || getClockOut.toString() == "0"
+                                         ? "..." : getClockOut.toString(),style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold,
+                                         color: Colors.black),),
+                                   ),
                                  ),
-                               ),
-                             ],
-                           ),
-                         ],
-                       )
+                               ],
+                             ),
+                           ],
+                         )
                      ),
+
 
                      Padding(
                        padding: EdgeInsets.only(top: 5),
@@ -333,7 +335,7 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                          width: double.infinity,
                          child: Column(
                            children: [
-                             Text("Attendance",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
+                             Text("Current Attendance",style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold,
                                  color: Colors.black)),
                              Wrap(
                                // alignment: WrapAlignment.start,
@@ -365,7 +367,6 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                          )
                      ),
 
-
                      Padding(
                        padding: EdgeInsets.only(top: 5),
                        child: Divider(height: 2,),
@@ -389,8 +390,8 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                          controller: _TimeStart,
                          decoration: InputDecoration(
                            contentPadding: const EdgeInsets.only(top: 2),
-                           hintText: 'Pick Correction Clock In',
-                           labelText: 'Clock In',
+                           hintText: 'Pick End Time Of Lembur',
+                           labelText: 'End Time Of Lembur',
                            labelStyle: TextStyle(
                                fontFamily: "VarelaRound",
                                fontSize: 16.5, color: Colors.black87
@@ -434,57 +435,6 @@ class _CorrectionAttendance extends State<CorrectionAttendance> {
                      ),
 
 
-                     Padding(
-                       padding: EdgeInsets.only(top: 25),
-                       child:  TextFormField(
-                         style: GoogleFonts.workSans(fontSize: 16),
-                         textCapitalization: TextCapitalization.sentences,
-                         controller: _TimeEnd,
-                         decoration: InputDecoration(
-                           contentPadding: const EdgeInsets.only(top: 2),
-                           hintText: 'Pick Correction Clock Out',
-                           labelText: 'Clock Out',
-                           labelStyle: TextStyle(
-                               fontFamily: "VarelaRound",
-                               fontSize: 16.5, color: Colors.black87
-                           ),
-                           floatingLabelBehavior: FloatingLabelBehavior
-                               .always,
-                           hintStyle: GoogleFonts.nunito(
-                               color: HexColor("#c4c4c4"), fontSize: 15),
-                           enabledBorder: UnderlineInputBorder(
-                             borderSide: BorderSide(
-                                 color: HexColor("#DDDDDD")),
-                           ),
-                           focusedBorder: UnderlineInputBorder(
-                             borderSide: BorderSide(
-                                 color: HexColor("#8c8989")),
-                           ),
-                           border: UnderlineInputBorder(
-                             borderSide: BorderSide(
-                                 color: HexColor("#DDDDDD")),
-                           ),
-                         ),
-                         enableInteractiveSelection: false,
-                         onTap: () async {
-                           FocusScope.of(context).requestFocus(
-                               new FocusNode());
-                           DatePicker.showTimePicker(context,
-                             //showTitleActions: true,
-                             showSecondsColumn: false,
-                             onChanged: (date) {
-                               selectedTimeEnd =
-                                   DateFormat("HH:mm").format(date);
-                               _TimeEnd.text = selectedTimeEnd;
-                             }, onConfirm: (date) {
-                               selectedTimeEnd =
-                                   DateFormat("HH:mm").format(date);
-                               _TimeEnd.text = selectedTimeEnd;
-                             },
-                             currentTime: DateTime.now(),);
-                         },
-                       ),
-                     )
 
 
                    ],

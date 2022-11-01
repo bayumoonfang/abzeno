@@ -61,12 +61,44 @@ class _PageMyRequest extends State<PageMyRequest> {
       body: RefreshIndicator(
           onRefresh: getData,
           child : Container(
+              padding: EdgeInsets.only(left: 15,right: 15,top: 10),
               width: double.infinity,
               height: double.infinity,
               color: Colors.white,
               child : Column(
                 children: [
-                  Padding(padding: const EdgeInsets.only(top: 10),),
+                  Padding(padding: const EdgeInsets.only(bottom: 15,top: 5),
+                      child: Container(
+                        height: 50,
+                        child: TextFormField(
+                          enableInteractiveSelection: false,
+                          onChanged: (text) {
+                            setState(() {
+                              filter = text;
+                            });
+                          },
+                          style: GoogleFonts.nunito(fontSize: 15),
+                          decoration: new InputDecoration(
+                            contentPadding: const EdgeInsets.all(10),
+                            fillColor: HexColor("#f4f4f4"),
+                            filled: true,
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 1.0,),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            hintText: 'Cari Time Off...',
+                          ),
+                        ),
+                      )
+                  ),
                   Expanded(
                       child: FutureBuilder(
                         future: getData(),
@@ -86,9 +118,9 @@ class _PageMyRequest extends State<PageMyRequest> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
-                                        Image.asset('assets/notfound.png',width: 250,),
+                                        Image.asset('assets/nodata.png',width: 150,),
                                         new Text(
-                                          "No Time Off Request",
+                                          "Data Not Found",
                                           style: new TextStyle(
                                               fontFamily: 'VarelaRound', fontSize: 15),
                                         ),
@@ -97,94 +129,58 @@ class _PageMyRequest extends State<PageMyRequest> {
                                 :
                                 Column(
                                   children: [
-                                    Padding(padding: const EdgeInsets.only(left: 15,top: 10,right: 15,bottom: 10),
-                                        child: Container(
-                                          height: 50,
-                                          child: TextFormField(
-                                            enableInteractiveSelection: false,
-                                            onChanged: (text) {
-                                              setState(() {
-                                                filter = text;
-                                              });
-                                            },
-                                            style: GoogleFonts.nunito(fontSize: 15),
-                                            decoration: new InputDecoration(
-                                              contentPadding: const EdgeInsets.all(10),
-                                              fillColor: HexColor("#f4f4f4"),
-                                              filled: true,
-                                              prefixIcon: Padding(
-                                                padding: const EdgeInsets.only(bottom: 4),
-                                                child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.white, width: 1.0,),
-                                                borderRadius: BorderRadius.circular(5.0),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
-                                                borderRadius: BorderRadius.circular(5.0),
-                                              ),
-                                              hintText: 'Cari My Request...',
-                                            ),
-                                          ),
-                                        )
-                                    ),
+
                                     Expanded(
                                       child: ListView.builder(
-                                        itemExtent: 75,
+                                        itemExtent: 90,
                                         itemCount: snapshot.data == null ? 0 : snapshot.data?.length,
-                                        padding: const EdgeInsets.only(left: 10,right: 15,bottom: 85),
+                                        padding: const EdgeInsets.only(bottom: 85),
                                         itemBuilder: (context, i) {
                                           return Column(
                                             children: [
 
                                               InkWell(
                                                 child : ListTile(
-                                                    visualDensity: VisualDensity(vertical: -2),
+                                                    visualDensity: VisualDensity(horizontal: -2),
                                                     dense : true,
                                                   title: Opacity(
                                                       opacity: 0.9,
                                                       child:
                                                       Padding(padding: EdgeInsets.only(top: 2),child:
                                                       Text(snapshot.data![i]["j"].toString(),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: GoogleFonts.montserrat(
-                                                          fontWeight: FontWeight.bold,fontSize: 17),),)
+                                                        overflow: TextOverflow.ellipsis,  style: GoogleFonts.montserrat(
+                                                            fontWeight: FontWeight.bold,fontSize: 15),),)
                                                   ),
                                                   subtitle: Column(
                                                     children: [
                                                       Padding(
                                                         padding: EdgeInsets.only(top: 2),
-                                                        child:   Align(alignment: Alignment.centerLeft,child: Row(
-                                                          children: [
-                                                            Text(
-                                                                AppHelper().getTanggalCustom(snapshot.data![i]["c"].toString()) + " "+
-                                                                    AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["c"].toString()) + " "+
-                                                                    AppHelper().getTahunCustom(snapshot.data![i]["c"].toString()),
-                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),
-                                                            Text(" - "),
-                                                            Text(
+                                                        child:   Align(alignment: Alignment.centerLeft,child:
+                                                        Text(
+                                                            AppHelper().getTanggalCustom(snapshot.data![i]["c"].toString()) + " "+
+                                                                AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["c"].toString()) + " "+
+                                                                AppHelper().getTahunCustom(snapshot.data![i]["c"].toString())+
+                                                                " - "+
                                                                 AppHelper().getTanggalCustom(snapshot.data![i]["d"].toString()) + " "+
-                                                                    AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["d"].toString()) + " "+
-                                                                    AppHelper().getTahunCustom(snapshot.data![i]["d"].toString()),
-                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),
-                                                            Text(" "),
-                                                            Text("("+snapshot.data![i]["k"].toString()+" Hari"+")",
-                                                                style: GoogleFonts.workSans(fontSize: 14,color: Colors.black))
-                                                          ],
-                                                        ),),
+                                                                AppHelper().getNamaBulanCustomSingkat(snapshot.data![i]["d"].toString()) + " "+
+                                                                AppHelper().getTahunCustom(snapshot.data![i]["d"].toString())+
+                                                                " ("+snapshot.data![i]["k"].toString()+" Hari"+")",
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: GoogleFonts.workSans(fontSize: 14,color: Colors.black)),),
                                                       ),
 
                                                       Padding(
                                                           padding: EdgeInsets.only(top: 2,bottom: 1),
                                                           child: Align(alignment: Alignment.centerLeft,
                                                               child:Text("Jenis : "+snapshot.data![i]["m"].toString(),
-                                                                  style: GoogleFonts.workSans()))),
+                                                                  style: GoogleFonts.nunito(fontSize: 14)))),
 
 
                                                     ],
                                                   ),
-                                                  trailing: Opacity(
+                                                  trailing:
+                                                  snapshot.data![i]["l"].toString() != 'Fully Approved' ?
+                                                  Opacity(
                                                     opacity: 0.9,
                                                     child: Container(
                                                       child: OutlinedButton(
@@ -193,8 +189,7 @@ class _PageMyRequest extends State<PageMyRequest> {
                                                           side: BorderSide(
                                                             width: 1,
                                                             color: snapshot.data![i]["l"].toString() == 'Pending'? Colors.black54 :
-                                                            snapshot.data![i]["l"].toString() == 'Approved 1' ? HexColor("#0074D9") :
-                                                            snapshot.data![i]["l"].toString() == 'Fully Approved' ? HexColor("#3D9970") :
+                                                            snapshot.data![i]["l"].toString() == 'Approved 1' ? HexColor("#0074D9")  :
                                                             HexColor("#FF4136"),
                                                             style: BorderStyle.solid,
                                                           ),
@@ -202,13 +197,12 @@ class _PageMyRequest extends State<PageMyRequest> {
                                                         child: Text(snapshot.data![i]["l"].toString(),style: GoogleFonts.nunito(fontSize: 12,
                                                             color: snapshot.data![i]["l"].toString() == 'Pending'? Colors.black54 :
                                                             snapshot.data![i]["l"].toString() == 'Approved 1' ? HexColor("#0074D9") :
-                                                            snapshot.data![i]["l"].toString() == 'Fully Approved' ? HexColor("#3D9970") :
                                                             HexColor("#FF4136")),),
                                                         onPressed: (){},
                                                       ),
                                                       height: 25,
                                                     ),
-                                                  )
+                                                  ) :  FaIcon(FontAwesomeIcons.circleCheck,color: HexColor("#3D9970"),size: 30,)
                                                 ),
                                                 onTap: (){
                                                   EasyLoading.show(status: "Loading...");

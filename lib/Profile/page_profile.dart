@@ -153,7 +153,7 @@ class _Profile extends State<Profile>{
                    const Padding(
                      padding: EdgeInsets.only(bottom: 5),
                      child: Divider(height: 2,),
-                   ),*/
+                   ),
                    InkWell(
                      child : Padding(
                        padding: const EdgeInsets.only(bottom: 5),
@@ -174,7 +174,7 @@ class _Profile extends State<Profile>{
                    const Padding(
                      padding: EdgeInsets.only(bottom: 5),
                      child: Divider(height: 2,),
-                   ),
+                   ),*/
                    InkWell(
                      child : Padding(
                        padding: const EdgeInsets.only(bottom: 5),
@@ -195,7 +195,7 @@ class _Profile extends State<Profile>{
                      child: Divider(height: 2,),
                    ),
 
-                   InkWell(
+                   /* InkWell(
                      child : Padding(
                        padding: const EdgeInsets.only(bottom: 5),
                        child: ListTile(
@@ -235,7 +235,7 @@ class _Profile extends State<Profile>{
                    const Padding(
                      padding: EdgeInsets.only(bottom: 5),
                      child: Divider(height: 2,),
-                   ),
+                   ),*/
 
                    InkWell(
                      child : Padding(

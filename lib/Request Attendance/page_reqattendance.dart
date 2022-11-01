@@ -65,7 +65,38 @@ class _RequestAttendance extends State<RequestAttendance> {
         padding: EdgeInsets.only(left: 15,right: 15,top: 10),
         child: Column(
           children: [
-            Padding(padding: const EdgeInsets.only(top: 10),),
+            Padding(padding: const EdgeInsets.only(bottom: 15,top: 5),
+                child: Container(
+                  height: 50,
+                  child: TextFormField(
+                    enableInteractiveSelection: false,
+                    onChanged: (text) {
+                      setState(() {
+                        filter = text;
+                      });
+                    },
+                    style: GoogleFonts.nunito(fontSize: 15),
+                    decoration: new InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      fillColor: HexColor("#f4f4f4"),
+                      filled: true,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 1.0,),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      hintText: 'Cari Attendance...',
+                    ),
+                  ),
+                )
+            ),
             Expanded(
                 child: FutureBuilder(
                   future: getData(),
@@ -85,9 +116,9 @@ class _RequestAttendance extends State<RequestAttendance> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Image.asset('assets/notfound.png',width: 250,),
+                                  Image.asset('assets/nodata.png',width: 150,),
                                   new Text(
-                                    "No Data",
+                                    "Data Not Found",
                                     style: new TextStyle(
                                         fontFamily: 'VarelaRound', fontSize: 15),
                                   ),
@@ -96,38 +127,7 @@ class _RequestAttendance extends State<RequestAttendance> {
                           :
                       Column(
                         children: [
-                          Padding(padding: const EdgeInsets.only(bottom: 10),
-                              child: Container(
-                                height: 50,
-                                child: TextFormField(
-                                  enableInteractiveSelection: false,
-                                  onChanged: (text) {
-                                    setState(() {
-                                      filter = text;
-                                    });
-                                  },
-                                  style: GoogleFonts.nunito(fontSize: 15),
-                                  decoration: new InputDecoration(
-                                    contentPadding: const EdgeInsets.all(10),
-                                    fillColor: HexColor("#f4f4f4"),
-                                    filled: true,
-                                    prefixIcon: Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Icon(Icons.search,size: 18,color: HexColor("#6c767f"),),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.white, width: 1.0,),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: HexColor("#f4f4f4"), width: 1.0),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    hintText: 'Cari Attendance...',
-                                  ),
-                                ),
-                              )
-                          ),
+
                           Expanded(
                             child: ListView.builder(
                               itemExtent: 90,

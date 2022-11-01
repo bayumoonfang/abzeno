@@ -56,7 +56,38 @@ class _AboutUs extends State<AboutUs> {
               Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: Text("Aplikasi HR terbaik karya anak bangsa", style: GoogleFonts.nunitoSans(fontSize: 14),),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 25),
+                child: Text("Developer Team", style: GoogleFonts.nunitoSans(fontSize: 22,fontWeight: FontWeight.bold),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Text("Team Leader/ Mobile Apps Developer", style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text("Ragil Bayu Respati", style: GoogleFonts.nunitoSans(fontSize: 14),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Text("Backend and Front End Developer", style: GoogleFonts.nunitoSans(fontSize: 14,fontWeight: FontWeight.bold),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text("Christian Kurnadi", style: GoogleFonts.nunitoSans(fontSize: 14),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text("Akhmad Efendy Mooduto", style: GoogleFonts.nunitoSans(fontSize: 14),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text("Eko Utomo", style: GoogleFonts.nunitoSans(fontSize: 14),),
               )
+
+
 
             ],
           )

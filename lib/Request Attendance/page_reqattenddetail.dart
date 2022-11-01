@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:abzeno/Helper/app_helper.dart';
 import 'package:abzeno/Helper/app_link.dart';
+import 'package:abzeno/Helper/page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -14,6 +15,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+
+import 'page_reqattend_gantishiftdetailattend.dart';
 
 
 class ReqAttendDetail extends StatefulWidget{
@@ -49,7 +52,7 @@ class _ReqAttendDetail extends State<ReqAttendDetail> {
   String reqattend_approv2_nama = "...";
   String reqattend_approv2_jabatan = "...";
   String reqattend_datecreated = "2022-05-23";
-
+  String reqattend_schedulecode = "...";
   _getReqAttendDetail() async {
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getReqAttendDetail&reqattendcode=" +
@@ -82,6 +85,7 @@ class _ReqAttendDetail extends State<ReqAttendDetail> {
       reqattend_approv2_nama = data["reqattend_approv2_nama"].toString();
       reqattend_approv2_jabatan = data["reqattend_approv2_jabatan"].toString();
       reqattend_datecreated = data["reqattend_datecreated"].toString();
+      reqattend_schedulecode = data["reqattend_schedulecode"].toString();
     });
   }
 
@@ -316,24 +320,58 @@ class _ReqAttendDetail extends State<ReqAttendDetail> {
                     ],
                   ) : Container(),
 
+                  reqattend_type.toString() == 'Ganti Shift' ?
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Schdeule Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                        Text(reqattend_schedulecode.toString(),
+                            style: GoogleFonts.nunito(fontSize: 14)),],
+                    ),
+                  ) :Container(),
+
+                  reqattend_type.toString() == 'Ganti Shift' ?
                   Padding(
                     padding: EdgeInsets.only(top: 10),
                     child:  Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Clock In Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                        Text(reqattend_clockin.toString(),
+                        Text(reqattend_scheduleclockin.toString(),
                             style: GoogleFonts.nunito(fontSize: 14)),],
                     ),
-                  ),
-
+                  ) :
                   Padding(
                     padding: EdgeInsets.only(top: 10),
                     child:  Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Text("Clock In Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                        Text( reqattend_type.toString() != 'Lembur in Same Day' ? reqattend_clockin.toString() :"-",
+                            style: GoogleFonts.nunito(fontSize: 14)),],
+                    ),
+                  ),
+
+                  reqattend_type.toString() == 'Ganti Shift' || reqattend_type.toString() == 'Lembur in Same Day' ?
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(reqattend_type.toString() == 'Lembur in Same Day' ? "End Time" : "Clock Out Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                        Text(reqattend_scheduleclockout.toString(),
+                            style: GoogleFonts.nunito(fontSize: 14)),],
+                    ),
+                  ) :  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text("Clock Out Request", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                        Text(reqattend_clockout.toString(),
+                        Text(reqattend_type.toString() == 'Lembur in Same Day' ? reqattend_clockout.toString() :
+                              reqattend_clockout.toString(),
                             style: GoogleFonts.nunito(fontSize: 14)),],
                     ),
                   ),
@@ -375,9 +413,36 @@ class _ReqAttendDetail extends State<ReqAttendDetail> {
 
             )),
 
+
+            Padding(
+              padding: EdgeInsets.only(top: 10,bottom: 20),),
+
+            reqattend_type.toString() == "Ganti Shift" ?
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(alignment: Alignment.centerLeft,child: Text("Latest Attendance",
+                      style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold)),),
+                  Container(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                      ),
+                      child: Text("Show Me"),
+                      onPressed: (){
+                        Navigator.push(context, ExitPage(page: RequestGantiShiftDetailAttend(
+                            widget.getKaryawanNo, reqattend_date)));
+                      },
+                    ),
+                    height: 30,
+                  )
+                ]
+            ) : Container(),
+
+            reqattend_type.toString() == "Ganti Shift" ?
             Padding(
               padding: EdgeInsets.only(top: 20,bottom: 20),
-              child: Divider(height: 3,),),
+              child: Divider(height: 3,),) : Container(),
 
             Align(alignment: Alignment.centerLeft,child: Text("Approval List",
                 style: GoogleFonts.nunito(fontSize: 17,fontWeight: FontWeight.bold)),),

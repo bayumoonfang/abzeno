@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 
+import 'package:abzeno/ApprovalList/page_approvallist.dart';
 import 'package:abzeno/Notification/page_notification.dart';
 import 'package:abzeno/Profile/page_profile.dart';
 import 'package:abzeno/attendance/page_doattendance.dart';
@@ -135,7 +136,7 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
               getScheduleID,
               getJamMasukSebelum,
               getJamKeluarSebelum,getPIN,getScheduleBtn),
-            Container(color: Colors.red,),
+            PageApprovalList(getKaryawanNo, getKaryawanNama),
             PageNotification(getEmail),
             Profile(getKaryawanNama, getKaryawanJabatan, getKaryawanNo)
             //PageMyApproval(widget.getKaryawanNo, widget.getKaryawanNama),

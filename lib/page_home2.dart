@@ -607,58 +607,96 @@ class _Home2 extends State<Home2> with AutomaticKeepAliveClientMixin<Home2> {
                               ),
                             ),
 
-                            InkWell(
-                              onTap: (){
+                           Opacity(
+                             opacity: 0.5,
+                             child:  InkWell(
+                               onTap: (){
 
-                              },
-                              child:Column(
-                                children: [
-                                  Container(
-                                      height: 45, width: 45,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: HexColor("#fff4f0"),
-                                        border: Border.all(
-                                          //color: HexColor("#ff8556"),
-                                          color : HexColor("#DDDDDD"),
-                                          width: 0.5,
+                               },
+                               child:Column(
+                                 children: [
+                                   Container(
+                                       height: 45, width: 45,
+                                       decoration: BoxDecoration(
+                                         borderRadius: BorderRadius.circular(50),
+                                         color: HexColor("#e8e8e8"),
+                                         border: Border.all(
+                                           //color: HexColor("#ff8556"),
+                                           color : HexColor("#DDDDDD"),
+                                           width: 0.5,
+                                         ),
+                                       ),
+                                       child: Center(
+                                         child: FaIcon(FontAwesomeIcons.clipboard, color: HexColor("#646464"), size: 24,),
+                                       )
+                                   ),
+                                   Padding(padding: const EdgeInsets.only(top:8),
+                                     child: Text("Reimburs", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
+                                 ],
+                               ),
+                             ),
+                           ),
+
+
+                           Opacity(
+                             opacity: 0.5,
+                             child:  InkWell(
+                               onTap: (){
+                                 // Navigator.push(context, ExitPage(page: PageRedeemPoint())).then(onGoBack);
+                               },
+                               child:Column(
+                                 children: [
+                                   Container(
+                                       height: 45, width: 45,
+                                       decoration: BoxDecoration(
+                                         borderRadius: BorderRadius.circular(50),
+                                         color: HexColor("#e8e8e8"),
+                                         border: Border.all(
+                                           //color: HexColor("#6238b6"),
+                                           color : HexColor("#DDDDDD"),
+                                           width: 0.5,
+                                         ),
+                                       ),
+                                       child: Center(
+                                         child: FaIcon(FontAwesomeIcons.users, color: HexColor("#646464"), size: 24,),
+                                       )
+                                   ),
+                                   Padding(padding: const EdgeInsets.only(top:8),
+                                     child: Text("My Teams", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
+                                 ],
+                               ),
+                             ),
+                           ),
+
+
+
+                            Opacity(
+                              opacity: 0.5,
+                              child:  InkWell(
+                                onTap: (){
+                                  // Navigator.push(context, ExitPage(page: PageRedeemPoint())).then(onGoBack);
+                                },
+                                child:Column(
+                                  children: [
+                                    Container(
+                                        height: 45, width: 45,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(50),
+                                          color: HexColor("#e8e8e8"),
+                                          border: Border.all(
+                                            //color: HexColor("#6238b6"),
+                                            color : HexColor("#DDDDDD"),
+                                            width: 0.5,
+                                          ),
                                         ),
-                                      ),
-                                      child: Center(
-                                        child: FaIcon(FontAwesomeIcons.clipboard, color: HexColor("#ff8556"), size: 24,),
-                                      )
-                                  ),
-                                  Padding(padding: const EdgeInsets.only(top:8),
-                                    child: Text("Reimburs", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
-                                ],
-                              ),
-                            ),
-
-
-                            InkWell(
-                              onTap: (){
-                                // Navigator.push(context, ExitPage(page: PageRedeemPoint())).then(onGoBack);
-                              },
-                              child:Column(
-                                children: [
-                                  Container(
-                                      height: 45, width: 45,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: HexColor("#f3effd"),
-                                        border: Border.all(
-                                          //color: HexColor("#6238b6"),
-                                          color : HexColor("#DDDDDD"),
-                                          width: 0.5,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: FaIcon(FontAwesomeIcons.users, color: HexColor("#6238b6"), size: 24,),
-                                      )
-                                  ),
-                                  Padding(padding: const EdgeInsets.only(top:8),
-                                    child: Text("My Teams", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
-                                ],
+                                        child: Center(
+                                          child: FaIcon(FontAwesomeIcons.computer, color: HexColor("#646464"), size: 24,),
+                                        )
+                                    ),
+                                    Padding(padding: const EdgeInsets.only(top:8),
+                                      child: Text("My Assets", style: TextStyle(fontFamily: 'VarelaRound',fontSize: 12)),)
+                                  ],
+                                ),
                               ),
                             ),
 
