@@ -1,5 +1,6 @@
 
-
+flutter build appbundle --no-sound-null-safety
+flutter build apk --release --no-sound-null-safety
 
 Future<dynamic> getOtherLocation() async {
     http.Response response = await http.Client().get(

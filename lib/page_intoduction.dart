@@ -20,7 +20,7 @@ class Introduction extends StatefulWidget {
 
 class _Introduction extends State<Introduction> {
 
-
+  //String aa = await DeviceInformation.deviceIMEINumber;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _Introduction extends State<Introduction> {
                 image: Padding(
                   padding: const EdgeInsets.only(top: 50),
                   child: Image.asset(
-                    "assets/logo.png",width: 400,
+                    "assets/LOGO2.png",height: 400,
                   ),
                 ),
                 title: "Aplikasi "+AppHelper().app_name,
@@ -64,7 +64,7 @@ class _Introduction extends State<Introduction> {
                 image: Padding(
                   padding: const EdgeInsets.only(top: 50),
                   child: Image.asset(
-                    "assets/png1.png",width: 270,height: 50,
+                    "assets/png1.png",width: 270,
                   ),
                 ),
                 title: "Management kehadiran kamu",

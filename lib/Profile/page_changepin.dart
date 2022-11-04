@@ -51,6 +51,7 @@ class _ChangePIN extends State<ChangePIN> {
           _pinValue.clear();
           Navigator.pop(context);
           Navigator.pop(context);
+          AppHelper().getDetailUser();
           SchedulerBinding.instance?.addPostFrameCallback((_) {
             AppHelper().showFlushBarconfirmed(context,
                 "PIN has been changed");

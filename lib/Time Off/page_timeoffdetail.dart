@@ -59,21 +59,26 @@ class _TimeOffDetail extends State<TimeOffDetail> {
   String timeoff_delegate_name = "...";
   String timeoff_file = "...";
   _getTimeOffDetail() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getTimeOffDetail&timeoffcode=" +
             widget.getTimeOffCode+"&getKaryawanNo="+widget.getKaryawanNo)).timeout(
         Duration(seconds: 10), onTimeout: () {
-      AppHelper().showFlushBarsuccess(context, "Koneksi terputus..");
-      http.Client().close();
-      return http.Response('Error', 500);
-    }
+        AppHelper().showFlushBarsuccess(context, "Koneksi terputus..");
+        http.Client().close();
+        return http.Response('Error', 500);
+      }
     );
     Map data = jsonDecode(response.body);
     setState(() {
       EasyLoading.dismiss();
       timeoff_reqBy = data["attrequest_reqby_name"].toString();
-      timeoff_datefrom = data["attrequest_datefrom"].toString();
-      timeoff_dateto = data["attrequest_dateto"].toString();
+      //timeoff_datefrom = data["attrequest_datefrom"].toString();
+      //timeoff_dateto = data["attrequest_dateto"].toString();
       timeoff_jumlahhari = data["attrequest_numdays"].toString();
       timeoff_number = data["attrequest_number"].toString();
       timeoff_tipe = data["setttimeoff_name"].toString();
@@ -122,9 +127,15 @@ class _TimeOffDetail extends State<TimeOffDetail> {
 
   _cancelRequest() async {
     EasyLoading.show(status: "Loading...");
+
     setState(() {
       _isPressed = true;
     });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=cancelRequest"), body: {
       "cancel_karyawan": widget.getKaryawanNo,
       "cancel_timeoffnumber": timeoff_number,
@@ -506,8 +517,6 @@ class _TimeOffDetail extends State<TimeOffDetail> {
                                               Padding(padding: EdgeInsets.only(top: 5,bottom: 10),
                                                 child: Column(
                                                   children: [
-
-
                                                     Container(
                                                         child:  Padding(padding: EdgeInsets.only(top: 8),
                                                             child: ListTile(

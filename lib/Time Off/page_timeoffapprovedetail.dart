@@ -66,6 +66,11 @@ class _TimeOffApproveDetail extends State<TimeOffApproveDetail> {
   String timeoff_appr2 = "...";
   String timeoff_file = "...";
   _getTimeOffDetail() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getTimeOffDetail&timeoffcode=" +
             widget.getTimeOffCode+"&getKaryawanNo="+widget.getKaryawanNo)).timeout(
@@ -139,6 +144,11 @@ class _TimeOffApproveDetail extends State<TimeOffApproveDetail> {
         noteApproveVal = _approveNote2.text;
       }
     });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=approveRequest"), body: {
       "approve_timeoffnumber": timeoff_number,
       "approve_timeoffkaryawanno": widget.getKaryawanNo,
@@ -181,6 +191,11 @@ class _TimeOffApproveDetail extends State<TimeOffApproveDetail> {
         noteRejectVal = _rejectnote2.text;
       }
     });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=rejectRequest"), body: {
       "reject_timeoffnumber": timeoff_number,
       "reject_timeoffkaryawanno": widget.getKaryawanNo,

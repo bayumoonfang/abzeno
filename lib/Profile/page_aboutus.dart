@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutUs extends StatefulWidget{
   @override
@@ -21,6 +22,24 @@ class AboutUs extends StatefulWidget{
 
 class _AboutUs extends State<AboutUs> {
 
+  String versionVal = '...';
+  String codeVal = '...';
+  getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      String version = packageInfo.version;
+      String code = packageInfo.buildNumber;
+      versionVal = version;
+      codeVal = code;
+    });
+  }
+
+
+
+  void initState() {
+    super.initState();
+    getVersion();
+  }
 
 
     @override
@@ -100,7 +119,7 @@ class _AboutUs extends State<AboutUs> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("PT. Karya Anak Bangsa @2022", style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold)),
-              Text("Version 2.1")
+              Text("Version "+versionVal+ " build "+codeVal, style: GoogleFonts.workSans(fontSize: 13)),
             ],
           ),
         ),

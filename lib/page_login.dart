@@ -103,7 +103,7 @@ class _PageLogin extends State<PageLogin> {
                 Opacity(
                     opacity: 0.8,
                     child :    Padding(padding: const EdgeInsets.only(top: 5),child :  Align(alignment: Alignment.centerLeft,
-                        child : Text("Pastikan email kamu sudah terdaftar dan aktif ya", style : GoogleFonts.nunitoSans(
+                        child : Text("Pastikan email sudah terdaftar dan aktif ya", style : GoogleFonts.nunitoSans(
                             fontSize: 13))),)
                 ),
                 Align(

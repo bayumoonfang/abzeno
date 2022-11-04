@@ -15,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Profile extends StatefulWidget{
   final String getKaryawanNama;
@@ -29,6 +30,29 @@ class Profile extends StatefulWidget{
 class _Profile extends State<Profile>{
 
 
+  String versionVal = '...';
+  String codeVal = '...';
+  getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      String version = packageInfo.version;
+      String code = packageInfo.buildNumber;
+      versionVal = version;
+      codeVal = code;
+    });
+  }
+
+
+  void initState() {
+    super.initState();
+    getVersion();
+  }
+
+  _clearallpref() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.clear();
+    Navigator.pushReplacement(context, ExitPage(page: Introduction()));
+  }
 
   _logout() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -39,7 +63,7 @@ class _Profile extends State<Profile>{
       preferences.setString("karyawan_nama", '');
       preferences.setString("karyawan_no", '');
       preferences.commit();
-      Navigator.pushReplacement(context, ExitPage(page: Introduction()));
+      _clearallpref();
     });
   }
 
@@ -175,20 +199,23 @@ class _Profile extends State<Profile>{
                      padding: EdgeInsets.only(bottom: 5),
                      child: Divider(height: 2,),
                    ),*/
-                   InkWell(
-                     child : Padding(
-                       padding: const EdgeInsets.only(bottom: 5),
-                       child: ListTile(
-                         minLeadingWidth : 25,
-                         dense:true,
-                         contentPadding: const EdgeInsets.only(left: 0.0, right: 0.0),
-                         leading: FaIcon(FontAwesomeIcons.laptopFile,color : HexColor("#ffa427")),
-                         title: Text("Career History", style: GoogleFonts.nunitoSans(fontSize: 16),),
-                         subtitle: Text("My Career History", style: GoogleFonts.nunito(fontSize: 13),),
-                         trailing: const FaIcon(FontAwesomeIcons.angleRight, size: 18,),
+                   Opacity(
+                     opacity: 0.4,
+                     child: InkWell(
+                       child : Padding(
+                         padding: const EdgeInsets.only(bottom: 5),
+                         child: ListTile(
+                           minLeadingWidth : 25,
+                           dense:true,
+                           contentPadding: const EdgeInsets.only(left: 0.0, right: 0.0),
+                           leading: FaIcon(FontAwesomeIcons.laptopFile,color : HexColor("#ffa427")),
+                           title: Text("Career History", style: GoogleFonts.nunitoSans(fontSize: 16),),
+                           subtitle: Text("My Career History", style: GoogleFonts.nunito(fontSize: 13),),
+                           trailing: const FaIcon(FontAwesomeIcons.angleRight, size: 18,),
+                         ),
                        ),
+                       onTap: (){},
                      ),
-                     onTap: (){},
                    ),
                    const Padding(
                      padding: EdgeInsets.only(bottom: 5),
@@ -259,8 +286,6 @@ class _Profile extends State<Profile>{
                      child: Divider(height: 2,),
                    ),
 
-
-
                   Padding(padding: EdgeInsets.only(top: 30),child:  Container(
                       padding: EdgeInsets.only(left: 25, right: 25, bottom: 10),
                       width: double.infinity,
@@ -285,10 +310,10 @@ class _Profile extends State<Profile>{
                       )
                   ),),
 
-                   const Padding(
+                  Padding(
                      padding: EdgeInsets.only(bottom: 5),
                      child: Center(
-                       child: Text("Ver. 2.1"),
+                       child: Text("Version "+versionVal+ " build "+codeVal, style: GoogleFonts.workSans(fontSize: 13)),
                      ),
                    ),
 

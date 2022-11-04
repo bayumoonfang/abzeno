@@ -53,6 +53,11 @@ class _ApprReqAttenDetail extends State<ApprReqAttenDetail> {
   String reqattend_datecreated = "2022-05-23";
   String reqattend_schedulecode = "...";
   _getReqAttendDetail() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getReqAttendDetail&reqattendcode=" +
             widget.getReqAttendCode+"&getKaryawanNo="+widget.getKaryawanNo)).timeout(
@@ -104,75 +109,6 @@ class _ApprReqAttenDetail extends State<ApprReqAttenDetail> {
 
 
 
-  _cancelRequest() async {
-    EasyLoading.show(status: "Loading...");
-    setState(() {
-      _isPressed = true;
-    });
-    final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=cancelRequestAttend"), body: {
-      "cancel_karyawan": widget.getKaryawanNo,
-      "cancel_reqattendnumber": widget.getReqAttendCode
-    }).timeout(Duration(seconds: 10),onTimeout: (){
-      http.Client().close();
-      AppHelper().showFlushBarerror(context, "Koneksi Terputus, silahkan ulangi sekali lagi");
-      return http.Response('Error',500);
-    });
-    Map data = jsonDecode(response.body);
-    setState(() {
-      if(data["message"] != '') {
-        EasyLoading.dismiss();
-        if(data["message"] == '1') {
-          setState(() {
-            _isPressed = false;
-          });
-          //Navigator.pushReplacement(context, ExitPage(page: Home()));
-          Navigator.pop(context);
-          Navigator.pop(context);
-          SchedulerBinding.instance?.addPostFrameCallback((_) {
-            AppHelper().showFlushBarconfirmed(context, "Successfully cancel request");
-          });
-        } else {
-          setState(() {
-            _isPressed = false;
-          });
-          AppHelper().showFlushBarsuccess(context, data["message"]);
-          return;
-        }
-      }
-    });
-  }
-
-
-
-  showBatalDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
-      onPressed:  () {Navigator.pop(context);},
-    );
-    Widget continueButton = TextButton(
-      child: Text("Continue", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#de2e56"))),
-      onPressed:  () {
-        _cancelRequest();
-      },
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Cancel Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
-      content: Text("Would you like to continue cancel this request ?", style: GoogleFonts.nunitoSans(),),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
 
 
   @override

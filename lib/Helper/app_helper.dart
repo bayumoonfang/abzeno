@@ -383,6 +383,25 @@ class AppHelper{
   }
 
 
+  Future<dynamic> getCountApprovalList() async {
+    String getKaryawanNo = await Session.getKaryawanNo();
+    http.Response response = await http.Client().get(
+        Uri.parse(applink + "mobile/api_mobile.php?act=getCountApprovalList&karyawanNo=" +
+            getKaryawanNo.toString()),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"}).timeout(
+        Duration(seconds: 20),onTimeout: (){
+      http.Client().close();
+      return http.Response('Error',500);
+    }
+    );
+    var data = jsonDecode(response.body);
+    return [
+      data["count_approvallist"].toString(), //0
+    ];
+  }
+
 
   Future<dynamic> getDetailUser() async {
     String getKaryawanNo = await Session.getKaryawanNo();
@@ -398,6 +417,7 @@ class AppHelper{
     );
     var data = jsonDecode(response.body);
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("getPIN", '');
     preferences.setString("getPIN", data["karyawan_password"].toString());
     return [
       data["karyawan_jabatan"].toString(), //0
@@ -476,6 +496,8 @@ class AppHelper{
     //print(applink+"mobile/api_mobile.php?act=get_attendanceSebelum&karyawan_no="+getKaryawanNo);
     var data = jsonDecode(response.body);
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("getJamMasukSebelum", '');
+    preferences.setString("getJamKeluarSebelum", '');
     preferences.setString("getJamMasukSebelum", data["attend_checkin"].toString());
     preferences.setString("getJamKeluarSebelum", data["attend_checkout"].toString());
     return [
@@ -522,9 +544,15 @@ class AppHelper{
 
     }
     );
-    //print(applink+"mobile/api_mobile.php?act=getScheduleDetail&karyawanNo="+getKaryawanNo+"&getDate="+dateme.toString());
+
     var data = jsonDecode(response.body);
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("getStartTime", '');
+    preferences.setString("getEndTime", '');
+    preferences.setString("getScheduleName", '');
+    preferences.setString("getScheduleID", '');
+    preferences.setString("getScheduleBtn", '');
+
     preferences.setString("getStartTime", data["schedule_clockin"].toString());
     preferences.setString("getEndTime", data["schedule_clockout"].toString());
     preferences.setString("getScheduleName", data["schedule_name"].toString());
@@ -536,12 +564,37 @@ class AppHelper{
     ];
   }
 
+  Future<dynamic> cekSettings() async {
+    String getEmail = await Session.getEmail();
+    http.Response response = await http.Client().get(
+        Uri.parse(applink+"mobile/api_mobile.php?act=getSettings&user="+getEmail.toString()),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"}).timeout(
+        Duration(seconds: 20),onTimeout: (){
+      http.Client().close();
+      return http.Response('Error',500);}
+    );
+    var data = jsonDecode(response.body);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("getBahasa", '');
+    preferences.setString("getNotif1", '');
+    preferences.setString("getNotif2", '');
+    preferences.setString("getBahasa", data["setting_bahasa"].toString());
+    preferences.setString("getNotif1", data["setting_notif1"].toString());
+    preferences.setString("getNotif2", data["setting_notif2"].toString());
+    return [
+      "Sukses"
+    ];
+  }
+
 
    reloadSession() async {
+    await cekSettings();
     await getSchedule();
     await getDetailUser();
-    //await getAttendance();
     await getAttendanceSebelum();
+    //await getAttendance();
     //await getWorkLocation();
   }
 
@@ -568,6 +621,9 @@ class AppHelper{
     String getJamKeluarSebelum = await Session.getJamKeluarSebelum();
     String getPIN = await Session.getPIN();
     String getScheduleBtn = await Session.getScheduleBtn();
+    String getBahasa = await Session.getBahasa();
+    String getNotif1 = await Session.getNotif1();
+    String getNotif2 = await Session.getNotif2();
     return [
       getEmail, //0,
       getUsername, //1
@@ -588,7 +644,10 @@ class AppHelper{
       getJamMasukSebelum, //16
       getJamKeluarSebelum, //17
       getPIN, //18
-      getScheduleBtn, //19
+      getScheduleBtn, //19,
+      getBahasa, //20
+      getNotif1, //21
+      getNotif2 //22
     ];
 
   }

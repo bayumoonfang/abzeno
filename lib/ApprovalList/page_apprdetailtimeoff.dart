@@ -31,6 +31,11 @@ class ApprTimeOffDetail extends StatefulWidget{
 
 class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
   bool _isPressed = false;
+  TextEditingController _rejectnote1 = TextEditingController();
+  TextEditingController _rejectnote2 = TextEditingController();
+  TextEditingController _approveNote1 = TextEditingController();
+  TextEditingController _approveNote2 = TextEditingController();
+
 
   String timeoff_reqBy = "...";
   String timeoff_datefrom = "2022-05-23";
@@ -57,17 +62,26 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
   String timeoff_appr2_note = "...";
   String timeoff_delegate = "...";
   String timeoff_delegate_name = "...";
+  String timeoff_appr1 = "...";
+  String timeoff_appr2 = "...";
   String timeoff_file = "...";
   _getTimeOffDetail() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getTimeOffDetail&timeoffcode=" +
             widget.getTimeOffCode+"&getKaryawanNo="+widget.getKaryawanNo)).timeout(
         Duration(seconds: 10), onTimeout: () {
       AppHelper().showFlushBarsuccess(context, "Koneksi terputus..");
+      EasyLoading.dismiss();
       http.Client().close();
       return http.Response('Error', 500);
     }
     );
+
     Map data = jsonDecode(response.body);
     setState(() {
       EasyLoading.dismiss();
@@ -95,8 +109,9 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
       timeoff_appr2_note = data["attrequest_appr2_note"].toString();
       timeoff_delegate = data["attrequest_delegated"].toString();
       timeoff_delegate_name = data["attrequest_delegated_name"].toString();
+      timeoff_appr1 = data["attrequest_appr1"].toString();
+      timeoff_appr2 = data["attrequest_appr2"].toString();
       timeoff_file = data["attrequest_file"].toString();
-
       //saldoTimeOff = data["timeoff_quota"].toString();
     });
   }
@@ -119,16 +134,27 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
 
 
 
-
-  _cancelRequest() async {
+  var noteApproveVal;
+  _approvedRequest(String valApp2) async {
     EasyLoading.show(status: "Loading...");
     setState(() {
       _isPressed = true;
+      if(valApp2== "1") {
+        noteApproveVal = _approveNote1.text;
+      } else {
+        noteApproveVal = _approveNote2.text;
+      }
     });
-    final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=cancelRequest"), body: {
-      "cancel_karyawan": widget.getKaryawanNo,
-      "cancel_timeoffnumber": timeoff_number,
-      "cancel_getKaryawanNama": widget.getKaryawanNama
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
+    final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=approveRequest"), body: {
+      "approve_timeoffnumber": timeoff_number,
+      "approve_timeoffkaryawanno": widget.getKaryawanNo,
+      "approve_timeoffapp": valApp2,
+      "approve_timeoffNote" : noteApproveVal
     }).timeout(Duration(seconds: 10),onTimeout: (){
       http.Client().close();
       AppHelper().showFlushBarerror(context, "Koneksi Terputus, silahkan ulangi sekali lagi");
@@ -142,9 +168,56 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
           //Navigator.pushReplacement(context, ExitPage(page: Home()));
           Navigator.pop(context);
           Navigator.pop(context);
-          SchedulerBinding.instance?.addPostFrameCallback((_) {
-            AppHelper().showFlushBarconfirmed(context, "Time Off Request has been Cancel");
-          });
+          Navigator.pop(context);
+          AppHelper().showFlushBarconfirmed(context, "Time Off Request has been Approved");
+          loadData2();
+        } else {
+          AppHelper().showFlushBarsuccess(context, data["message"]);
+          //print(data["message"]);
+          return;
+        }
+      }
+    });
+  }
+
+
+  var noteRejectVal;
+  _rejectRequest(String valApp) async {
+    EasyLoading.show(status: "Loading...");
+    setState(() {
+      _isPressed = true;
+      if(valApp == "1") {
+        noteRejectVal = _rejectnote1.text;
+      } else {
+        noteRejectVal = _rejectnote2.text;
+      }
+    });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
+    final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=rejectRequest"), body: {
+      "reject_timeoffnumber": timeoff_number,
+      "reject_timeoffkaryawanno": widget.getKaryawanNo,
+      "reject_timeoffapp": valApp,
+      "reject_timeoffNote" : noteRejectVal
+    }).timeout(Duration(seconds: 10),onTimeout: (){
+      http.Client().close();
+      AppHelper().showFlushBarerror(context, "Koneksi Terputus, silahkan ulangi sekali lagi");
+      return http.Response('Error',500);
+    });
+    Map data = jsonDecode(response.body);
+    setState(() {
+      if(data["message"] != '') {
+        EasyLoading.dismiss();
+        if(data["message"] == '1') {
+          //Navigator.pushReplacement(context, ExitPage(page: Home()));
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          AppHelper().showFlushBarconfirmed(context, "Time Off Request has been Reject");
+          loadData2();
         } else {
           AppHelper().showFlushBarsuccess(context, data["message"]);
           return;
@@ -154,28 +227,26 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
   }
 
 
-  showBatalDialog(BuildContext context) {
-    // set up the buttons
+
+  showDialogReject1(BuildContext context) {
     Widget cancelButton = TextButton(
       child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
-      onPressed:  () {Navigator.pop(context);},
+      onPressed:  () {Navigator.pop(context);_rejectnote1.clear();},
     );
     Widget continueButton = TextButton(
-      child: Text("Continue", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#de2e56"))),
+      child: Text("Reject", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#e21b4c"))),
       onPressed:  () {
-        _cancelRequest();
+        _rejectRequest("1");
       },
     );
-    // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Cancel Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
-      content: Text("Would you like to continue cancel this request ?", style: GoogleFonts.nunitoSans(),),
+      title: Text("Reject Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
+      content: Text("Would you like to continue reject this request as Approval 1 ?", style: GoogleFonts.nunitoSans(),),
       actions: [
         cancelButton,
         continueButton,
       ],
     );
-    // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -186,6 +257,90 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
 
 
 
+  showDialogReject2(BuildContext context) {
+    Widget cancelButton = TextButton(
+      child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
+      onPressed:  () {Navigator.pop(context);_rejectnote2.clear();},
+    );
+    Widget continueButton = TextButton(
+      child: Text("Reject", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#e21b4c"))),
+      onPressed:  () {
+        _rejectRequest("2");
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Reject Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
+      content: Text("Would you like to continue reject this request as Approval 2 ?", style: GoogleFonts.nunitoSans(),),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showDialog1(BuildContext context) {
+    Widget cancelButton = TextButton(
+      child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
+      onPressed:  () {Navigator.pop(context);_approveNote1.clear();},
+    );
+    Widget continueButton = TextButton(
+      child: Text("Approve", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#1a76d2"))),
+      onPressed:  () {
+        _approvedRequest("1");
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Approve Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
+      content: Text("Would you like to continue approve this request as Approval 1 ?", style: GoogleFonts.nunitoSans(),),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+
+  showDialog2(BuildContext context) {
+    Widget cancelButton = TextButton(
+      child: Text("Cancel", style: GoogleFonts.nunito(color: Colors.black)),
+      onPressed:  () {
+        Navigator.pop(context);
+        _approveNote2.clear();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Approve", style: GoogleFonts.nunito(fontWeight: FontWeight.bold, color: HexColor("#1a76d2"))),
+      onPressed:  () {
+        _approvedRequest("2");
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Approve Request", style: GoogleFonts.montserrat(fontSize: 18,fontWeight: FontWeight.bold)),
+      content: Text("Would you like to continue approve this request as Approval 2 ?", style: GoogleFonts.nunitoSans(),),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
 
   @override
@@ -193,7 +348,6 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
     return WillPopScope(child: Scaffold(
       appBar: AppBar(
         //shape: Border(bottom: BorderSide(color: Colors.red)),
-        //backgroundColor: HexColor("#128C7E"),
         backgroundColor: HexColor("#3a5664"),
         title: Text("Detail Time Off", style: GoogleFonts.montserrat(fontSize: 17,fontWeight: FontWeight.bold),),
         elevation: 0,
@@ -279,186 +433,169 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
                   child: Divider(height: 3,),),
 
                 Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(18),
-                      child: Column(
-                        children: [
-                          Row(
+                  child: Padding(
+                    padding: EdgeInsets.all(18),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Request By", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                            Text(timeoff_reqBy.toString(), style: GoogleFonts.nunito(fontSize: 14),),],
+                        ),
+
+
+
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Request By", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                              Text(timeoff_reqBy.toString(), style: GoogleFonts.nunito(fontSize: 14),),],
+                              Text("Delegate", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(
+                                  timeoff_delegate == 'null' ? '-' : timeoff_delegate_name,
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
+                        ),
 
 
 
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Delegate", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(
-                                    timeoff_delegate == 'null' ? '-' : timeoff_delegate_name,
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
+
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Start Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(
+                                  AppHelper().getTanggalCustom(timeoff_datefrom.toString()) + " "+
+                                      AppHelper().getNamaBulanCustomSingkat(timeoff_datefrom.toString()) + " "+
+                                      AppHelper().getTahunCustom(timeoff_datefrom.toString()),
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
-
-
-
-
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Start Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(
-                                    AppHelper().getTanggalCustom(timeoff_datefrom.toString()) + " "+
-                                        AppHelper().getNamaBulanCustomSingkat(timeoff_datefrom.toString()) + " "+
-                                        AppHelper().getTahunCustom(timeoff_datefrom.toString()),
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("End Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(
+                                  AppHelper().getTanggalCustom(timeoff_dateto.toString()) + " "+
+                                      AppHelper().getNamaBulanCustomSingkat(timeoff_dateto.toString()) + " "+
+                                      AppHelper().getTahunCustom(timeoff_dateto.toString()),
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("End Date", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(
-                                    AppHelper().getTanggalCustom(timeoff_dateto.toString()) + " "+
-                                        AppHelper().getNamaBulanCustomSingkat(timeoff_dateto.toString()) + " "+
-                                        AppHelper().getTahunCustom(timeoff_dateto.toString()),
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
+                        ),
+                        timeoff_needtime.toString() == 'Yes' ?
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Start Time", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(timeoff_starttime.toString().substring(0,5),
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
-                          timeoff_needtime.toString() == 'Yes' ?
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Start Time", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(timeoff_starttime.toString().substring(0,5),
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
-                          ) : Container(),
+                        ) : Container(),
 
-                          timeoff_needtime.toString() == 'Yes' ?
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("End Time", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(timeoff_endtime.toString().substring(0,5),
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
-                          ) : Container(),
-
-
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Number Days", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Container(
-                                  child: OutlinedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: HexColor("#0074D9"),
-                                        style: BorderStyle.solid,
-                                      ),
-                                    ),
-                                    child: Text(timeoff_jumlahhari.toString()+" hari",style: GoogleFonts.nunito(fontSize: 12,
-                                        color: HexColor("#0074D9")),),
-                                    onPressed: (){},
-                                  ),
-                                  height: 25,
-                                )],
-                            ),
+                        timeoff_needtime.toString() == 'Yes' ?
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("End Time", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(timeoff_endtime.toString().substring(0,5),
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
+                        ) : Container(),
 
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Time Off Type", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(timeoff_tipe.toString(),
-                                    style: GoogleFonts.nunito(fontSize: 14)),],
-                            ),
+
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Number Days", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(timeoff_jumlahhari.toString()+" hari",
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
                           ),
+                        ),
 
-                          timeoff_saldo.toString() != '99' ?
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Saldo", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                Text(timeoff_saldo.toString()+" hari",
-                                    style: GoogleFonts.nunito(fontSize: 14))
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Time Off Type", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(timeoff_tipe.toString(),
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
+                          ),
+                        ),
 
-                              ],
-                            ),
-                          ) : Container(),
+                        timeoff_saldo.toString() != '99' ?
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Saldo", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                              Text(timeoff_saldo.toString()+" hari",
+                                  style: GoogleFonts.nunito(fontSize: 14)),],
+                          ),
+                        ) : Container(),
 
-
-                          timeoff_file.toString() != "" ?
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Attachment", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
-                                  GestureDetector(
-                                    child : Hero(
-                                      tag: timeoff_file.toString() ,
-                                      child : Text("Tap to view the attachment", style: GoogleFonts.nunito(fontSize: 14,color: Colors.blue,fontWeight:
-                                      FontWeight.bold)),
-
-                                    ),
-                                    onTap: (){
-                                      Navigator.of(context).push(
-                                          new MaterialPageRoute(
-                                              builder: (BuildContext context) => DetailImageAttRequest(timeoff_file.toString())));
-                                    },
-                                  ),
-                                ]
-                            ),
-                          ) : Container(),
-
-
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child:  Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Align(
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child:  Text("Description", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14,
+                                    fontWeight: FontWeight.bold),),
+                              ),
+                              Align(
                                   alignment: Alignment.centerLeft,
-                                  child:  Text("Description", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14,
-                                      fontWeight: FontWeight.bold),),
-                                ),
-                                Align(
-                                    alignment: Alignment.centerLeft,
-                                    child:  Text(timeoff_description.toString(),
-                                        style: GoogleFonts.nunito(fontSize: 14)))
-                              ],
-                            ),
+                                  child:  Text(timeoff_description.toString(),
+                                      style: GoogleFonts.nunito(fontSize: 14)))
+                            ],
                           ),
+                        ),
 
 
 
-                        ],
-                      ),
-                    )
+                        timeoff_file.toString() != "" ?
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Attachment", textAlign: TextAlign.left, style: GoogleFonts.nunito(fontSize: 14),),
+                                GestureDetector(
+                                  child : Hero(
+                                    tag: timeoff_file.toString() ,
+                                    child : Text("Tap to view the attachment", style: GoogleFonts.nunito(fontSize: 14,color: Colors.blue,fontWeight:
+                                    FontWeight.bold)),
+
+                                  ),
+                                  onTap: (){
+                                    Navigator.of(context).push(
+                                        new MaterialPageRoute(
+                                            builder: (BuildContext context) => DetailImageAttRequest(timeoff_file.toString())));
+                                  },
+                                ),
+                              ]
+                          ),
+                        ) : Container(),
+
+
+
+                      ],
+                    ),
+                  ),
                 ),
-
 
 
                 Padding(
@@ -636,6 +773,464 @@ class _ApprTimeOffDetail extends State<ApprTimeOffDetail> {
 
               ],
             )),
+      ),
+      bottomSheet:Container(
+        padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+        width: double.infinity,
+        height: 50,
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.spaceEvenly,
+          children: [
+
+
+            timeoff_appr1.toString() == widget.getKaryawanNo && timeoff_appr1_status.toString() == 'Waiting Approval' ?
+            Container(
+                width: 150,
+                child:
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: HexColor("#1a76d2"),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(side: BorderSide(
+                          color: Colors.white,
+                          width: 0.1,
+                          style: BorderStyle.solid
+                      ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      )),
+                  child: Text("Approve Request",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                      fontSize: 14),),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+                        context: context,
+                        builder: (context) {
+                          return SingleChildScrollView(
+                              child : Container(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 25,right: 25,top: 25),
+                                  child: Column(
+                                    children: [
+                                      Align(alignment: Alignment.centerLeft,child: Text("Approval Note",
+                                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold,fontSize: 17),)),
+                                      Padding(padding: EdgeInsets.only(top: 25,bottom: 25),
+                                        child: Column(
+                                          children: [
+                                            Align(alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 0),
+                                                child: TextFormField(
+                                                  style: GoogleFonts.workSans(fontSize: 16),
+                                                  textCapitalization: TextCapitalization
+                                                      .sentences,
+                                                  controller: _approveNote1,
+                                                  decoration: InputDecoration(
+                                                    contentPadding: const EdgeInsets.only(
+                                                        top: 2),
+                                                    hintText: 'Write your notes as approval 1',
+                                                    labelText: 'Note',
+                                                    labelStyle: TextStyle(fontFamily: "VarelaRound",
+                                                        fontSize: 16.5, color: Colors.black87
+                                                    ),
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    hintStyle: GoogleFonts.nunito(color: HexColor("#c4c4c4"), fontSize: 15),
+                                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#8c8989")),
+                                                    ),
+                                                    border: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                  ),
+
+                                                ),
+                                              ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 60,
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary: HexColor("#1a76d2"),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(side: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 0.1,
+                                                  style: BorderStyle.solid
+                                              ),
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              )),
+                                          child: Text("Approve",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                              fontSize: 14),),
+                                          onPressed: () {
+                                            showDialog1(context);
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          );
+                        });
+                  },
+                )
+            ) : Container(),
+
+
+
+            timeoff_appr1.toString() == widget.getKaryawanNo && timeoff_appr1_status.toString() == 'Waiting Approval' ?
+            Container(
+                width: 150,
+                child:
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: HexColor("#e21b4c"),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(side: BorderSide(
+                          color: Colors.white,
+                          width: 0.1,
+                          style: BorderStyle.solid
+                      ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      )),
+                  child: Text("Reject Request",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                      fontSize: 14),),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+                        context: context,
+                        builder: (context) {
+                          return SingleChildScrollView(
+                              child : Container(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 25,right: 25,top: 25),
+                                  child: Column(
+                                    children: [
+                                      Align(alignment: Alignment.centerLeft,child: Text("Reject Note",
+                                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold,fontSize: 17),)),
+                                      Padding(padding: EdgeInsets.only(top: 25,bottom: 25),
+                                        child: Column(
+                                          children: [
+                                            Align(alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 0),
+                                                child: TextFormField(
+                                                  style: GoogleFonts.workSans(fontSize: 16),
+                                                  textCapitalization: TextCapitalization
+                                                      .sentences,
+                                                  controller: _rejectnote1,
+                                                  decoration: InputDecoration(
+                                                    contentPadding: const EdgeInsets.only(
+                                                        top: 2),
+                                                    hintText: 'Write your notes as approval 1',
+                                                    labelText: 'Note',
+                                                    labelStyle: TextStyle(fontFamily: "VarelaRound",
+                                                        fontSize: 16.5, color: Colors.black87
+                                                    ),
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    hintStyle: GoogleFonts.nunito(color: HexColor("#c4c4c4"), fontSize: 15),
+                                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#8c8989")),
+                                                    ),
+                                                    border: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                  ),
+
+                                                ),
+                                              ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 60,
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary: HexColor("#e21b4c"),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(side: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 0.1,
+                                                  style: BorderStyle.solid
+                                              ),
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              )),
+                                          child: Text("Reject",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                              fontSize: 14),),
+                                          onPressed: () {
+                                            showDialogReject1(context);
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          );
+                        });
+                  },
+                )
+            ) : Container(),
+
+
+
+            timeoff_appr2.toString() == widget.getKaryawanNo &&
+                (timeoff_appr1_status.toString() == 'Approved' || timeoff_appr1_status.toString() != 'Rejected'
+                    || timeoff_appr1_status.toString() != 'Waiting Approval') &&
+                (timeoff_appr2_status.toString() == 'Waiting Approval') ?
+            Container(
+                width: 150,
+                child:
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: HexColor("#1a76d2"),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(side: BorderSide(
+                          color: Colors.white,
+                          width: 0.1,
+                          style: BorderStyle.solid
+                      ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      )),
+                  child: Text("Approve Request",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                      fontSize: 14),),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+                        context: context,
+                        builder: (context) {
+                          return SingleChildScrollView(
+                              child : Container(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 25,right: 25,top: 25),
+                                  child: Column(
+                                    children: [
+                                      Align(alignment: Alignment.centerLeft,child: Text("Approval Note",
+                                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold,fontSize: 17),)),
+                                      Padding(padding: EdgeInsets.only(top: 25,bottom: 25),
+                                        child: Column(
+                                          children: [
+                                            Align(alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 0),
+                                                child: TextFormField(
+                                                  style: GoogleFonts.workSans(fontSize: 16),
+                                                  textCapitalization: TextCapitalization
+                                                      .sentences,
+                                                  controller: _approveNote2,
+                                                  decoration: InputDecoration(
+                                                    contentPadding: const EdgeInsets.only(
+                                                        top: 2),
+                                                    hintText: 'Write your notes as approval 2',
+                                                    labelText: 'Note',
+                                                    labelStyle: TextStyle(fontFamily: "VarelaRound",
+                                                        fontSize: 16.5, color: Colors.black87
+                                                    ),
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    hintStyle: GoogleFonts.nunito(color: HexColor("#c4c4c4"), fontSize: 15),
+                                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#8c8989")),
+                                                    ),
+                                                    border: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                  ),
+
+                                                ),
+                                              ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 60,
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary: HexColor("#1a76d2"),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(side: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 0.1,
+                                                  style: BorderStyle.solid
+                                              ),
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              )),
+                                          child: Text("Approve",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                              fontSize: 14),),
+                                          onPressed: () {
+                                            showDialog2(context);
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          );
+                        });
+                  },
+                )
+            ) : Container(),
+
+
+            timeoff_appr2.toString() == widget.getKaryawanNo &&
+                (timeoff_appr1_status.toString() == 'Approved' || timeoff_appr1_status.toString() != 'Rejected'
+                    || timeoff_appr1_status.toString() != 'Waiting Approval') &&
+                (timeoff_appr2_status.toString() == 'Waiting Approval') ?
+            Container(
+                width: 150,
+                child:
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: HexColor("#e21b4c"),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(side: BorderSide(
+                          color: Colors.white,
+                          width: 0.1,
+                          style: BorderStyle.solid
+                      ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      )),
+                  child: Text("Reject Request",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                      fontSize: 14),),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+                        context: context,
+                        builder: (context) {
+                          return SingleChildScrollView(
+                              child : Container(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 25,right: 25,top: 25),
+                                  child: Column(
+                                    children: [
+                                      Align(alignment: Alignment.centerLeft,child: Text("Approval Note",
+                                        style: GoogleFonts.montserrat(fontWeight: FontWeight.bold,fontSize: 17),)),
+                                      Padding(padding: EdgeInsets.only(top: 25,bottom: 25),
+                                        child: Column(
+                                          children: [
+                                            Align(alignment: Alignment.centerLeft,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 0),
+                                                child: TextFormField(
+                                                  style: GoogleFonts.workSans(fontSize: 16),
+                                                  textCapitalization: TextCapitalization
+                                                      .sentences,
+                                                  controller: _rejectnote2,
+                                                  decoration: InputDecoration(
+                                                    contentPadding: const EdgeInsets.only(
+                                                        top: 2),
+                                                    hintText: 'Write your notes as approval 2',
+                                                    labelText: 'Note',
+                                                    labelStyle: TextStyle(fontFamily: "VarelaRound",
+                                                        fontSize: 16.5, color: Colors.black87
+                                                    ),
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    hintStyle: GoogleFonts.nunito(color: HexColor("#c4c4c4"), fontSize: 15),
+                                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#8c8989")),
+                                                    ),
+                                                    border: UnderlineInputBorder(borderSide: BorderSide(
+                                                        color: HexColor("#DDDDDD")),
+                                                    ),
+                                                  ),
+
+                                                ),
+                                              ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 60,
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary: HexColor("#e21b4c"),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(side: BorderSide(
+                                                  color: Colors.white,
+                                                  width: 0.1,
+                                                  style: BorderStyle.solid
+                                              ),
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              )),
+                                          child: Text("Reject",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+                                              fontSize: 14),),
+                                          onPressed: () {
+                                            showDialogReject2(context);
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          );
+                        });
+                  },
+                )
+            ) : Container(),
+
+
+
+
+
+          ],
+
+        ),
+
       ),
     ), onWillPop: onWillPop);
   }

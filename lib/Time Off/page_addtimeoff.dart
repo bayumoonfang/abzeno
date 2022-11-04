@@ -66,6 +66,11 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
   TextEditingController _uploadme = TextEditingController();
 
   Future getAlltimeOffType() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     var response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getAlltimeOffType&karyawan_no=" +
             widget.getKaryawanNo));
@@ -85,6 +90,11 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
   String filter2 = "";
 
   Future<List> getAllrequestTo() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     http.Response response = await http.Client().get(
         Uri.parse(
             applink + "mobile/api_mobile.php?act=getAllrequestTo&filter=" +
@@ -106,6 +116,11 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
   String saldoTimeOff = "";
 
   _getTimeOffNeedTime(String getVal) async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getTimeOffNeedTime&timeoffcode=" +
             getVal + "&karyawan_no=" + widget.getKaryawanNo)).timeout(
@@ -229,6 +244,12 @@ class _PageAddTimeOff extends State<PageAddTimeOff> {
     } else {
       Baseme = Base64;
     }
+
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(
         Uri.parse(applink + "mobile/api_mobile.php?act=addtimeoff_req"),
         body: {

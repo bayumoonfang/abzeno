@@ -3,13 +3,18 @@
 
 import 'dart:convert';
 
+import 'package:abzeno/Attendance/page_attendance.dart';
+import 'package:abzeno/Helper/app_helper.dart';
 import 'package:abzeno/Helper/app_link.dart';
+import 'package:abzeno/Helper/page_route.dart';
+import 'package:abzeno/Profile/page_attendancehistory.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
@@ -51,27 +56,30 @@ class _MySchedule extends State<MySchedule> {
       timeOffTypeList = jsonData;
       timeOffTypeList.map((item) {
         setState(() {
-
           DateTime dt = DateTime.parse(item['attend_date'].toString());
           if(item['attend_description'].toString() == '') {
             _events[dt] = [
-                "Daily Attendance","Clock In : "+item['attend_checkin'].toString()+" | Clock Out : "+item['attend_checkout'].toString()
+                 "Daily Attendance \n"+
+                 "Clock In : "+item['attend_checkin'].toString()+" | Clock Out : "+item['attend_checkout'].toString()+"\n\n"+""
+                     "Attendance Location \n"+""
+                     "Clock In : "+item['attend_clockin_location'].toString()+"\n"+""
+                     "Clock Out : "+item['attend_clockout_location'].toString()
             ];
           } else {
             if(item['setttimeoff_name'].toString() == 'null') {
               if(item['reqattend_description'].toString() == 'null') {
                 _events[dt] = [
-                  "-",item['attend_description'].toString()
+                  "- \n",item['attend_description'].toString()
                 ];
               } else {
                 _events[dt] = [
-                  item['reqattend_description'].toString(),item['attend_description'].toString()
+                  item['reqattend_description'].toString()+ " \n"+item['attend_description'].toString()
                 ];
               }
 
             } else {
               _events[dt] = [
-                item['setttimeoff_name'].toString(),item['attend_description'].toString()
+                item['setttimeoff_name'].toString() + " \n"+item['attend_description'].toString(),
               ];
             }
           }
@@ -110,6 +118,10 @@ class _MySchedule extends State<MySchedule> {
     });
     return newMap;
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +173,6 @@ class _MySchedule extends State<MySchedule> {
               builders: CalendarBuilders(
                 singleMarkerBuilder: (context, date, event) {
                   return Container(
-
                     decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
                     width: 7.0,
                     height: 13,
@@ -196,20 +207,48 @@ class _MySchedule extends State<MySchedule> {
             ..._selectedEvents.map((event) => Padding(
               padding: const EdgeInsets.only(left: 25,top: 5),
               child: Container(
-                height:18,
                 width: double.infinity,
                 child: Column(
                   children: [
                        Align(alignment: Alignment.centerLeft,
                        child:      Text(event,
-                           style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold,fontSize: 14)))
+                           style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold,fontSize: 14))),
+
+
                   ],
                 ),
               ),
             )),
+
           ],
         ),
       ),
+    bottomSheet: Container(
+    padding: EdgeInsets.only(left: 35, right: 35, bottom: 10),
+      width: double.infinity,
+      height: 55,
+      child:
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            //primary: HexColor(AppHelper().main_color),
+            elevation: 0,
+            shape: RoundedRectangleBorder(side: BorderSide(
+                color: Colors.white,
+                width: 0.1,
+                style: BorderStyle.solid
+            ),
+              borderRadius: BorderRadius.circular(5.0),
+            )),
+        child: Text("See Full List",style: GoogleFonts.lexendDeca(color: Colors.white,fontWeight: FontWeight.bold,
+            fontSize: 14)),
+        onPressed: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+          setState(() {
+            Navigator.push(context, ExitPage(page: AttendanceHistory(widget.getKaryawanNo)));
+          });
+
+        },
+      )),
     ), onWillPop: onWillPop);
   }
 

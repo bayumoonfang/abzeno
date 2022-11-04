@@ -33,6 +33,11 @@ class _PageMyRequest extends State<PageMyRequest> {
   String filter = "";
   String sortby = '0';
   Future<List> getData() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     http.Response response = await http.get(  Uri.parse(applink+"mobile/api_mobile.php?act=getAttendanceRequest&"
         "karyawan_no="+widget.getKaryawanNo+"&filter="+filter)).timeout(
         Duration(seconds: 10),onTimeout: (){

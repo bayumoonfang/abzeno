@@ -48,6 +48,7 @@ class Home extends StatefulWidget{
 class _Home extends State<Home> with SingleTickerProviderStateMixin {
   int _selectedPage = 0;
   String getNotifCountme = "0";
+  String getCountApprovalList = "0";
   late List data;
 
 
@@ -71,7 +72,18 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
       setState(() {
         getNotifCountme = value[0];
       });});
+
   }
+
+
+  getApprovalListCount() async {
+    await AppHelper().getCountApprovalList().then((value){
+      setState(() {
+        getCountApprovalList = value[0];
+      });});
+
+  }
+
 
 
   _startingVariable() async {
@@ -93,9 +105,8 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
       });});
 
     await getNotif();
+    await getApprovalListCount();
   }
-
-
 
   loadData2() async {
     await _startingVariable();
@@ -107,14 +118,29 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 4);
-    setState(() {
-      timer = Timer.periodic(Duration(seconds: 5), (Timer t) => (){
-        setState(() {
-          getNotif();
-        });
-      });
-    });
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => runLoopMe());
     loadData2();
+  }
+
+
+  void runLoopMe() async {
+    getNotif();
+    getApprovalListCount();
+    await AppHelper().getSchedule();
+    await AppHelper().getSession().then((value){
+      setState(() {
+        getScheduleName = value[6];
+        getStartTime = value[7];
+        getEndTime = value[8];
+        getScheduleID = value[15];
+        getScheduleBtn = value[19];
+      });});
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   late TabController _tabController;
@@ -135,7 +161,7 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
               getEndTime,
               getScheduleID,
               getJamMasukSebelum,
-              getJamKeluarSebelum,getPIN,getScheduleBtn),
+              getJamKeluarSebelum,getPIN,getScheduleBtn,getEmail),
             PageApprovalList(getKaryawanNo, getKaryawanNama),
             PageNotification(getEmail),
             Profile(getKaryawanNama, getKaryawanJabatan, getKaryawanNo)
@@ -153,18 +179,28 @@ class _Home extends State<Home> with SingleTickerProviderStateMixin {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.fileSignature),
+              icon:
+              getCountApprovalList != "0" ?
+              Badge(
+                showBadge: true,
+                badgeContent: Text(getCountApprovalList.toString(), style: const TextStyle(color: Colors.white)),
+                animationType:  BadgeAnimationType.scale,
+                shape: BadgeShape.circle,
+                position: BadgePosition.topEnd(top: -9,end: -3),
+                child: const FaIcon(FontAwesomeIcons.fileSignature),
+              ) :
+              FaIcon(FontAwesomeIcons.fileSignature),
               label: 'Approval',
             ),
             BottomNavigationBarItem(
               icon:
-    getNotifCountme != "0" ?
+            getNotifCountme != "0" ?
               Badge(
                 showBadge: true,
-                //badgeContent: Text(getNotifCountme.toString(), style: const TextStyle(color: Colors.white)),
+                badgeContent: Text(getNotifCountme.toString(), style: const TextStyle(color: Colors.white)),
                 animationType:  BadgeAnimationType.scale,
                 shape: BadgeShape.circle,
-                position: BadgePosition.topEnd(top: 0,end: -1),
+                position: BadgePosition.topEnd(top: -9,end: -8),
                 child: const FaIcon(FontAwesomeIcons.calendar),
               ) :
               FaIcon(FontAwesomeIcons.calendar),

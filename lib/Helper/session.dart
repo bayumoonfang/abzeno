@@ -142,4 +142,22 @@ class Session {
     return value22;
   }
 
+  static getBahasa() async {
+    final SharedPreferences preferences = await _prefs;
+    var value23 = preferences.getString('getBahasa');
+    return value23;
+  }
+
+  static getNotif1() async {
+    final SharedPreferences preferences = await _prefs;
+    var value24 = preferences.getString('getNotif1');
+    return value24;
+  }
+
+  static getNotif2() async {
+    final SharedPreferences preferences = await _prefs;
+    var value25 = preferences.getString('getNotif2');
+    return value25;
+  }
+
 }

@@ -62,6 +62,11 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
   String reqattend_schedulecode = "...";
 
   _getReqAttendDetail() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.get(Uri.parse(
         applink + "mobile/api_mobile.php?act=getReqAttendDetail&reqattendcode=" +
             widget.getReqAttendCode+"&getKaryawanNo="+widget.getKaryawanNo)).timeout(
@@ -118,6 +123,11 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
     setState(() {
       _isPressed = true;
     });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=approveRequestAttend"), body: {
       "approve_reqattendnumber": widget.getReqAttendCode,
       "approve_reqattendkaryawanno": widget.getKaryawanNo,
@@ -154,6 +164,11 @@ class _ReqAttendApproveDetail extends State<ReqAttendApproveDetail> {
     setState(() {
       _isPressed = true;
     });
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     final response = await http.post(Uri.parse(applink+"mobile/api_mobile.php?act=rejectRequestAttend"), body: {
       "reject_reqattendnumber": widget.getReqAttendCode,
       "reject_reqattendkaryawanno": widget.getKaryawanNo,

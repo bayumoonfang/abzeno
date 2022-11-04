@@ -27,15 +27,23 @@ class _PageCheck extends State<PageCheck> {
       AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
       return false;
     }});
-    await AppHelper().reloadSession();
+
     await AppHelper().getSession().then((value){
       setState(() {
-        if(value[0] == '') {
+        if(value[0] == '' || value[0] == null) {
           Navigator.pushReplacement(context, ExitPage(page: Introduction()));
+          _gotoHome();
         } else {
-          Navigator.pushReplacement(context, ExitPage(page: Home()));
+          _gotoHome();
         }
       });});
+    await AppHelper().reloadSession();
+  }
+
+
+  _gotoHome() async{
+    await AppHelper().reloadSession();
+    Navigator.pushReplacement(context, ExitPage(page: Home()));
   }
 
 

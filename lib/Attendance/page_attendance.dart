@@ -38,6 +38,7 @@ class PageClockIn extends StatefulWidget{
   final String getStartTime;
   final String getEndTime;
   final String getScheduleName;
+  final String getWorkLocation;
   const PageClockIn(
       this.getKaryawanNo,
       this.getJam,
@@ -50,7 +51,8 @@ class PageClockIn extends StatefulWidget{
       this.getKaryawanJabatan,
       this.getStartTime,
       this.getEndTime,
-      this.getScheduleName);
+      this.getScheduleName,
+      this.getWorkLocation);
   @override
   _PageClockIn createState() => _PageClockIn();
 }
@@ -63,7 +65,7 @@ class _PageClockIn extends State<PageClockIn> {
   bool isPressed = false;
   var jarak = 0;
   LatLng _initialcameraposition = LatLng(-7.281798579483975, 112.73688279669264);
-  late LatLng currentPostion = LatLng(-7.281798579483975, 112.73688279669264);
+  late LatLng currentPostion = LatLng(-7.134805, 111.863460);
   late LatLng _locationCabang;
   late GoogleMapController _controller;
   locator.Location _location = locator.Location();
@@ -82,6 +84,7 @@ class _PageClockIn extends State<PageClockIn> {
     setState(() {
       _locationCabang = LatLng(double.parse(widget.getLocationLat), double.parse(widget.getLocationLong));
     });
+    EasyLoading.dismiss();
     LocationPermission permission = await Geolocator.checkPermission();
     servicestatus = await Geolocator.isLocationServiceEnabled();
     if(servicestatus){
@@ -95,16 +98,22 @@ class _PageClockIn extends State<PageClockIn> {
         }else{
           haspermission = true;
         }
+        EasyLoading.dismiss();
       }else{
         haspermission = true;
+        EasyLoading.dismiss();
       }
       if(haspermission){
         await getLocation();
+        EasyLoading.dismiss();
       }
     }else{
       AppHelper().showFlushBarerror(context,"GPS Service is not enabled, turn on GPS location");
+      EasyLoading.dismiss();
     }
-    setState((){});
+    setState((){
+      EasyLoading.dismiss();
+    });
   }
 
 
@@ -418,7 +427,10 @@ class _PageClockIn extends State<PageClockIn> {
                               "Clock In",
                               widget.getKaryawanNama,
                           widget.getKaryawanJabatan,
-                          widget.getStartTime,widget.getEndTime,widget.getScheduleName)))
+                          widget.getStartTime,widget.getEndTime,widget.getScheduleName,
+                          widget.getWorkLocation,
+                          widget.getLocationLat,
+                          widget.getLocationLong)))
                               :
                           Navigator.push(context, ExitPage(page: ClockOut(
                               widget.getKaryawanNo,
@@ -428,7 +440,10 @@ class _PageClockIn extends State<PageClockIn> {
                               "Clock Out",
                               widget.getKaryawanNama,
                               widget.getKaryawanJabatan,
-                              widget.getStartTime,widget.getEndTime,widget.getScheduleName)));
+                              widget.getStartTime,widget.getEndTime,widget.getScheduleName,
+                              widget.getWorkLocation,
+                              widget.getLocationLat,
+                              widget.getLocationLong)));
                         }
                         //EasyLoading.show(status: "Loading...");
                       },

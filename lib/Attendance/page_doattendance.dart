@@ -28,9 +28,13 @@ class ClockOut extends StatefulWidget {
   final String getStartTime;
   final String getEndTime;
   final String getScheduleName;
+  final String getWorkLocation;
+  final String getLocationLat;
+  final String getLocationLong;
   const ClockOut(this.getKaryawanNo, this.getJam, this.getNamaHari,this.getNote,this.getType,
       this.getKaryawanNama,
-      this.getKaryawanJabatan,this.getStartTime,this.getEndTime,this.getScheduleName);
+      this.getKaryawanJabatan,this.getStartTime,this.getEndTime,this.getScheduleName,
+      this.getWorkLocation,this.getLocationLat,this.getLocationLong);
   @override
   _ClockOut createState()=> _ClockOut();
 }
@@ -49,7 +53,10 @@ class _ClockOut extends State<ClockOut> {
       "att_getStartTime": widget.getStartTime,
       "att_getEndTime": widget.getEndTime,
       "att_getScheduleName": widget.getScheduleName,
-      "att_type" : widget.getType
+      "att_type" : widget.getType,
+      "att_locationname" : widget.getWorkLocation,
+      "att_locationlat" : widget.getLocationLat,
+      "att_locationlong" : widget.getLocationLong
     }).timeout(Duration(seconds: 10),onTimeout: (){
       http.Client().close();
       AppHelper().showFlushBarerror(context, "Koneksi Terputus, silahkan ulangi sekali lagi");

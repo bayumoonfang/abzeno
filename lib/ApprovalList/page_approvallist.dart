@@ -34,6 +34,11 @@ class _PageApprovalList extends State<PageApprovalList> {
   String filter = "";
   String sortby = '0';
   Future<List> getData() async {
+    await AppHelper().getConnect().then((value){if(value == 'ConnInterupted'){
+      AppHelper().showFlushBarsuccess(context, "Koneksi Putus");
+      EasyLoading.dismiss();
+      return false;
+    }});
     http.Response response = await http.get(  Uri.parse(applink+"mobile/api_mobile.php?act=getApprovalList&"
         "getKaryawanNo="+widget.getKaryawanNo+"&filter="+filter)).timeout(
         Duration(seconds: 10),onTimeout: (){
@@ -47,6 +52,11 @@ class _PageApprovalList extends State<PageApprovalList> {
 
   }
 
+  FutureOr onGoBack(dynamic value) {
+    setState(() {
+      getData();
+    });
+  }
 
 
   @override
@@ -174,7 +184,7 @@ class _PageApprovalList extends State<PageApprovalList> {
                                                 ],
                                               ),
                                                 trailing:
-                                                snapshot.data![i]["e"].toString() != 'Approved' ?
+                                                snapshot.data![i]["e"].toString() == 'Pending' ?
                                                 Opacity(
                                                   opacity: 0.9,
                                                   child: Container(
@@ -183,29 +193,47 @@ class _PageApprovalList extends State<PageApprovalList> {
                                                         elevation: 0,
                                                         side: BorderSide(
                                                           width: 1,
-                                                          color: snapshot.data![i]["e"].toString() == 'Pending'? Colors.black54 :
-                                                          snapshot.data![i]["e"].toString() == 'Approved 1' ? HexColor("#0074D9")  :
+                                                          color: Colors.black54,
+                                                          style: BorderStyle.solid,
+                                                        ),
+                                                      ),
+                                                      child: Text(snapshot.data![i]["e"].toString(),style: GoogleFonts.nunito(fontSize: 12,
+                                                          color: Colors.black54),),
+                                                      onPressed: (){},
+                                                    ),
+                                                    height: 25,
+                                                  ),
+                                                ) : snapshot.data![i]["e"].toString() == 'Approved' ?
+                                                FaIcon(FontAwesomeIcons.circleCheck,color: HexColor("#3D9970"),size: 30,)
+                                                    :
+                                                Opacity(
+                                                  opacity: 0.9,
+                                                  child: Container(
+                                                    child: OutlinedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        elevation: 0,
+                                                        side: BorderSide(
+                                                          width: 1,
+                                                          color:
                                                           HexColor("#FF4136"),
                                                           style: BorderStyle.solid,
                                                         ),
                                                       ),
                                                       child: Text(snapshot.data![i]["e"].toString(),style: GoogleFonts.nunito(fontSize: 12,
-                                                          color: snapshot.data![i]["e"].toString() == 'Pending'? Colors.black54 :
-                                                          snapshot.data![i]["e"].toString() == 'Approved 1' ? HexColor("#0074D9") :
+                                                          color:
                                                           HexColor("#FF4136")),),
                                                       onPressed: (){},
                                                     ),
                                                     height: 25,
                                                   ),
-                                                ) :  FaIcon(FontAwesomeIcons.circleCheck,color: HexColor("#3D9970"),size: 30,)
-
+                                                )
                                             ),
                                             onTap: (){
                                               FocusScope.of(context).requestFocus(FocusNode());
                                               snapshot.data![i]["b"].toString().substring(0,6) == 'REQATT' ?
-                                              Navigator.push(context, ExitPage(page: ApprReqAttenDetail(snapshot.data![i]["b"].toString(), widget.getKaryawanNo)))
+                                              Navigator.push(context, ExitPage(page: ApprReqAttenDetail(snapshot.data![i]["b"].toString(), widget.getKaryawanNo))).then(onGoBack)
       :
-                                              Navigator.push(context, ExitPage(page: ApprTimeOffDetail(snapshot.data![i]["b"].toString(), widget.getKaryawanNo, widget.getKaryawanNama)));
+                                              Navigator.push(context, ExitPage(page: ApprTimeOffDetail(snapshot.data![i]["b"].toString(), widget.getKaryawanNo, widget.getKaryawanNama))).then(onGoBack);
 
 
                                             },

@@ -177,7 +177,7 @@ class _PageFullProfile extends State<PageFullProfile> {
 
 
             selectedValue.toString() == "1" ?
-              Container(
+              Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -527,8 +527,8 @@ class _PageFullProfile extends State<PageFullProfile> {
                             ],
                           ),
                         ),
-                      ) : Container()
-
+                      ) : Container(),
+SizedBox(height: 50,)
           ],
         ),
       ),
